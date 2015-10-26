@@ -22,7 +22,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Eav\Seeders\TestDbSeeder'
+			'--class' => 'Cookbook\Api\Seeders\TestDbSeeder'
 		]);
 
 		$this->d = new Dumper();
@@ -83,7 +83,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider'];
+		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
 	}
 
 	public function testCreateEntityType()
@@ -97,7 +97,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'multiple_sets' => 1
 		];
 
-		$response = $this->call('POST', '/entity-types', $params);
+		$response = $this->call('POST', 'api/entity-types', $params);
 
 		$this->assertEquals(201, $response->status());
 
@@ -125,15 +125,18 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'multiple_sets' => 1
 		];
 
-		$response = $this->call('POST', '/entity-types', $params);
+		$response = $this->call('POST', 'api/entity-types', $params);
 
 		$this->assertEquals(422, $response->status());
 
 		$this->seeJson([
-			'code' => 422,
-			'status' => 422,
-			'message' => 'The code field is required.',
-			'pointer' => '/entity-types/code'
+			'status_code' => 422,
+			'message' => '422 Unprocessable Entity',
+			'errors' => [
+				'entity-types' => [
+					'code' => ['The code field is required.']
+				]
+			]
 		]);
 
 		$this->d->dump(json_decode($response->getContent()));
@@ -148,7 +151,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'code' => 'type_code2'
 		];
 
-		$response = $this->call('PATCH', '/entity-types/1', $params);
+		$response = $this->call('PATCH', 'api/entity-types/1', $params);
 
 		$this->assertEquals(200, $response->status());
 
@@ -171,15 +174,18 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'code' => ''
 		];
 
-		$response = $this->call('PATCH', '/entity-types/1', $params);
+		$response = $this->call('PATCH', 'api/entity-types/1', $params);
 
 		$this->assertEquals(422, $response->status());
 
 		$this->seeJson([
-			'code' => 422,
-			'status' => 422,
-			'message' => 'The code field is required.',
-			'pointer' => '/entity-types/code'
+			'status_code' => 422,
+			'message' => '422 Unprocessable Entity',
+			'errors' => [
+				'entity-types' => [
+					'code' => ['The code field is required.']
+				]
+			]
 		]);
 
 		$this->d->dump(json_decode($response->getContent()));
@@ -192,24 +198,22 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', '/entity-types/1', []);
+		$response = $this->call('DELETE', 'api/entity-types/1', []);
 
-		$this->assertEquals(200, $response->status());
+		$this->assertEquals(204, $response->status());
 	}
 
 	public function testDeleteFails()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', '/entity-types/112233', []);
+		$response = $this->call('DELETE', 'api/entity-types/112233', []);
 
 		$this->assertEquals(404, $response->status());
 
 		$this->seeJson([
-			'code' => 404,
-			'status' => 404,
-			'message' => 'There is no entity type with that ID.',
-			'pointer' => '/'
+			'status_code' => 404,
+			'message' => '404 Not Found'
 		]);
 		
 		$this->d->dump(json_decode($response->getContent()));
@@ -219,16 +223,14 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/entity-types/1', []);
+		$response = $this->call('GET', 'api/entity-types/1', []);
 		
 		$this->assertEquals(200, $response->status());
 
 		$this->seeJson([
 			'code' => 'tests',
 			'attribute_sets' => [
-				[ 'id' => 1, 'type' => 'attribute-set' ],
-				[ 'id' => 2, 'type' => 'attribute-set' ],
-				[ 'id' => 3, 'type' => 'attribute-set' ]
+				[ 'id' => 1, 'type' => 'attribute-set' ]
 			]
 		]);
 
@@ -239,15 +241,13 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/entity-types/112233', []);
+		$response = $this->call('GET', 'api/entity-types/112233', []);
 		
 		$this->assertEquals(404, $response->status());
 
 		$this->seeJson([
-			'code' => 404,
-			'status' => 404,
-			'message' => 'There is no entity type with that ID.',
-			'pointer' => '/'
+			'status_code' => 404,
+			'message' => '404 Not Found'
 		]);
 
 		$this->d->dump(json_decode($response->getContent()));
@@ -258,22 +258,22 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/entity-types', []);
+		$response = $this->call('GET', 'api/entity-types', []);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 3, count(json_decode($response->getContent())->data) );
+		$this->assertEquals( 3, count(json_decode($response->getContent())) );
 	}
 
 	public function testGetParams()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/entity-types', ['sort' => '-code', 'limit' => 2]);
+		$response = $this->call('GET', 'api/entity-types', ['sort' => '-code', 'limit' => 2]);
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())->data) );
+		$this->assertEquals( 2, count(json_decode($response->getContent())) );
 		$this->d->dump(json_decode($response->getContent()));
 		
 	}
@@ -282,9 +282,9 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/entity-types', ['limit' => 2, 'include' => 'attribute_sets.attributes']);
+		$response = $this->call('GET', 'api/entity-types', ['limit' => 2, 'include' => 'attribute_sets.attributes']);
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())->data) );
+		$this->assertEquals( 2, count(json_decode($response->getContent())) );
 		$this->d->dump(json_decode($response->getContent()));
 		
 	}

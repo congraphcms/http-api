@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Cookbook\Core\Facades\Trunk;
 use Illuminate\Support\Debug\Dumper;
-
-// include_once(realpath(__DIR__.'/../LaravelMocks.php'));
 
 class AttributeTest extends Orchestra\Testbench\TestCase
 {
@@ -22,15 +21,10 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Eav\Seeders\TestDbSeeder'
+			'--class' => 'Cookbook\Api\Seeders\TestDbSeeder'
 		]);
 
 		$this->d = new Dumper();
-
-
-		// $this->app = $this->createApplication();
-
-		// $this->bus = $this->app->make('Illuminate\Contracts\Bus\Dispatcher');
 
 	}
 
@@ -38,8 +32,9 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
+		// Trunk::forgetAll();
+		// $this->artisan('migrate:reset');
 		
-		$this->artisan('migrate:reset');
 		parent::tearDown();
 	}
 
@@ -83,7 +78,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider'];
+		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
 	}
 
 	public function testCreateAttribute()
@@ -101,22 +96,16 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'status' => 'user_defined'
 		];
 
-		$response = $this->call('POST', '/attributes', $params);
+		$response = $this->call('POST', 'api/attributes', $params);
+
+		$this->d->dump(json_decode($response->getContent()));
+		
 
 		$this->assertEquals(201, $response->status());
 
 		$this->seeJson([
-			'code' => 'code',
-			'field_type' => 'text',
-			'localized' => 0,
-			'default_value' => '',
-			'unique' => 0,
-			'required' => 0,
-			'filterable' => 0,
-			'status' => 'user_defined'
+			'code' => 'code'
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
 
 		$this->seeInDatabase('attributes', ['code' => 'code']);
 
@@ -139,15 +128,18 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'status' => 'user_defined'
 		];
 
-		$response = $this->call('POST', '/attributes', $params);
+		$response = $this->call('POST', 'api/attributes', $params);
 
 		$this->assertEquals(422, $response->status());
 
 		$this->seeJson([
-			'code' => 422,
-			'status' => 422,
-			'message' => 'The code field is required.',
-			'pointer' => '/attributes/code'
+			'status_code' => 422,
+			'message' => '422 Unprocessable Entity',
+			'errors' => [
+				'attributes' => [
+					'code' => ['The code field is required.']
+				]
+			]
 		]);
 
 		$this->d->dump(json_decode($response->getContent()));
@@ -162,16 +154,15 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'code' => 'code2'
 		];
 
-		$response = $this->call('PATCH', '/attributes/1', $params);
+		$response = $this->call('PATCH', 'api/attributes/1', $params);
+
+		$this->d->dump(json_decode($response->getContent()));
 
 		$this->assertEquals(200, $response->status());
 
 		$this->seeJson([
 			'code' => 'code2'
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
-
 		$this->seeInDatabase('attributes', ['id' => 1, 'code' => 'code2']);
 		
 
@@ -185,18 +176,21 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'code' => ''
 		];
 
-		$response = $this->call('PATCH', '/attributes/1', $params);
+		$response = $this->call('PUT', 'api/attributes/1', $params);
+
+		$this->d->dump(json_decode($response->getContent()));
 
 		$this->assertEquals(422, $response->status());
 
 		$this->seeJson([
-			'code' => 422,
-			'status' => 422,
-			'message' => 'The code field is required.',
-			'pointer' => '/attributes/code'
+			'status_code' => 422,
+			'message' => '422 Unprocessable Entity',
+			'errors' => [
+				'attributes' => [
+					'code' => ['The code field is required.']
+				]
+			]
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
 
 		$this->seeInDatabase('attributes', ['id' => 1, 'code' => 'attribute1']);
 
@@ -206,14 +200,9 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', '/attributes/1', []);
+		$response = $this->call('DELETE', 'api/attributes/1', []);
 
-		$this->assertEquals(200, $response->status());
-
-		$this->seeJson([
-			'data' => 1
-		]);
-		
+		$this->assertEquals(204, $response->status());
 
 	}
 
@@ -221,15 +210,13 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', '/attributes/' . 112233, []);
+		$response = $this->call('DELETE', 'api/attributes/1233', []);
 
 		$this->assertEquals(404, $response->status());
 
 		$this->seeJson([
-			'code' => 404,
-			'status' => 404,
-			'message' => 'There is no attribute with that ID.',
-			'pointer' => '/'
+			'status_code' => 404,
+			'message' => '404 Not Found'
 		]);
 		
 
@@ -239,7 +226,9 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/attributes/1', []);
+		$response = $this->call('GET', 'api/attributes/1', []);
+
+		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(200, $response->status());
 
@@ -253,50 +242,46 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'filterable' => 0,
 			'status' => 'system_defined'
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
 	}
 
 	public function testFetchFails()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/attributes/112233', []);
+		$response = $this->call('GET', 'api/attributes/112233', []);
+
+		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(404, $response->status());
 
 		$this->seeJson([
-			'code' => 404,
-			'status' => 404,
-			'message' => 'There is no attribute with that ID.',
-			'pointer' => '/'
+			'status_code' => 404,
+			'message' => '404 Not Found'
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
 	}
 	
 	
 	public function testGetAttributes()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__ . "\n");	
 
-		$response = $this->call('GET', '/attributes', []);
+		$response = $this->call('GET', 'api/attributes', []);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 7, count(json_decode($response->getContent())->data) );
+		$this->assertEquals( 7, count(json_decode($response->getContent())) );
 	}
 
 	public function testGetParams()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', '/attributes', ['sort' => '-code', 'limit' => 3]);
+		$response = $this->call('GET', 'api/attributes', ['sort' => '-code', 'limit' => 3]);
 
-		$this->assertEquals( 3, count(json_decode($response->getContent())->data) );
 		$this->d->dump(json_decode($response->getContent()));
-		
+
+		$this->assertEquals( 3, count(json_decode($response->getContent())) );
 	}
 }

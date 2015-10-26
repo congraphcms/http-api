@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Cookbook\Core\Facades\Trunk;
 use Illuminate\Support\Debug\Dumper;
 
-// include_once(realpath(__DIR__.'/../LaravelMocks.php'));
-
-class AttributeSetTest extends Orchestra\Testbench\TestCase
+class EntityTest extends Orchestra\Testbench\TestCase
 {
 
 	public function setUp()
@@ -27,19 +26,15 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 		$this->d = new Dumper();
 
-
-		// $this->app = $this->createApplication();
-
-		// $this->bus = $this->app->make('Illuminate\Contracts\Bus\Dispatcher');
-
 	}
 
 	public function tearDown()
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
-		
+		Trunk::forgetAll();
 		$this->artisan('migrate:reset');
+		
 		parent::tearDown();
 	}
 
@@ -86,37 +81,36 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
 	}
 
-	public function testCreateAttributeSet()
+	public function testCreateEntity()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => 'test-attr-set',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'attributes' => [
-				['id' => 1],
-				['id' => 2]
+			'type' => 'tests',
+			'attribute_set' => ['id' => 1],
+			'locale_id' => 0,
+			'fields' => [
+				'attribute1' => 'some_unique_value',
+				'attribute2' => ''
 			]
 		];
 
-		$response = $this->call('POST', 'api/attribute-sets', $params);
+		$response = $this->call('POST', 'api/entities', $params);
 
 		$this->d->dump(json_decode($response->getContent()));
+		
 
 		$this->assertEquals(201, $response->status());
 
 		$this->seeJson([
-			'code' => 'test-attr-set',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'attributes' => [
-				['id' => 1, 'type' => 'attribute'],
-				['id' => 2, 'type' => 'attribute']
+			'fields' => [
+				'attribute1' => 'some_unique_value',
+				'attribute2' => '',
+				'attribute3' => ''
 			]
 		]);
 
-		$this->seeInDatabase('attribute_sets', ['code' => 'test-attr-set']);
+		$this->seeInDatabase('attribute_values_varchar', ['value' => 'some_unique_value']);
 
 	}
 
@@ -125,18 +119,15 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => '',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'attributes' => [
-				['id' => 1],
-				['id' => 2]
+			'type' => 'tests',
+			'attribute_set' => ['id' => 1],
+			'locale_id' => 0,
+			'fields' => [
+				'attribute1' => ''
 			]
 		];
 
-		$response = $this->call('POST', 'api/attribute-sets', $params);
-
-		$this->d->dump(json_decode($response->getContent()));
+		$response = $this->call('POST', 'api/entities', $params);
 
 		$this->assertEquals(422, $response->status());
 
@@ -144,32 +135,39 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'attribute-sets' => [
-					'code' => ['The code field is required.']
+				'entities' => [
+					'fields' => [
+						'attribute1' => [ 'This field is required.' ]
+					]
 				]
 			]
 		]);
+
+		$this->d->dump(json_decode($response->getContent()));
+
 	}
 
-	public function testUpdateAttributeSet()
+	public function testUpdateEntity()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => 'set_code2'
+			'locale_id' => 0,
+			'fields' => [
+				'attribute1' => 'changed value'
+			]
 		];
 
-		$response = $this->call('PATCH', 'api/attribute-sets/1', $params);
+		$response = $this->call('PATCH', 'api/entities/1', $params);
 
 		$this->d->dump(json_decode($response->getContent()));
 
 		$this->assertEquals(200, $response->status());
 
 		$this->seeJson([
-			'code' => 'set_code2'
+			'attribute1' => 'changed value'
 		]);
-
-		$this->seeInDatabase('attribute_sets', ['id' => 1, 'code' => 'set_code2']);
+		$this->seeInDatabase('attribute_values_varchar', ['value' => 'changed value']);
 		
 
 	}
@@ -179,10 +177,13 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => ''
+			'locale_id' => 0,
+			'fields' => [
+				'attribute1' => ''
+			]
 		];
 
-		$response = $this->call('PUT', 'api/attribute-sets/1', $params);
+		$response = $this->call('PUT', 'api/entities/1', $params);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -192,32 +193,33 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'attribute-sets' => [
-					'code' => ['The code field is required.']
+				'entities' => [
+					'fields' => [
+						'attribute1' => [ 'This field is required.' ]
+					]
 				]
 			]
 		]);
 
-		$this->seeInDatabase('attribute_sets', ['id' => 1, 'code' => 'attribute_set1']);
+		$this->seeInDatabase('attribute_values_varchar', ['id' => 1, 'value' => 'value1']);
 
 	}
 
-	public function testDeleteAttributeSet()
+	public function testDeleteEntity()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/attribute-sets/1', []);
+		$response = $this->call('DELETE', 'api/entities/1', []);
 
 		$this->assertEquals(204, $response->status());
+
 	}
 
 	public function testDeleteFails()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/attribute-sets/112233', []);
-
-		$this->d->dump(json_decode($response->getContent()));
+		$response = $this->call('DELETE', 'api/entities/1233', []);
 
 		$this->assertEquals(404, $response->status());
 
@@ -225,24 +227,30 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 404,
 			'message' => '404 Not Found'
 		]);
+		
+
 	}
 	
-	public function testFetchAttributeSet()
+	public function testFetchEntity()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/attribute-sets/1', []);
+		$response = $this->call('GET', 'api/entities/1', []);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(200, $response->status());
 
 		$this->seeJson([
-			'code' => 'attribute_set1',
-			'attributes' => [
-				[ 'id' => 2, 'type' => 'attribute' ],
-				[ 'id' => 1, 'type' => 'attribute' ],
-				[ 'id' => 3, 'type' => 'attribute' ]
+			"id" => 1,
+			"entity_type_id" => 1,
+			"attribute_set_id" => 1,
+			"entity_type" => "tests",
+			"type" => "entity",
+			'fields' => [
+				'attribute1' => 'value1',
+				'attribute2' => 'value2',
+				'attribute3' => 'value3'
 			]
 		]);
 	}
@@ -251,7 +259,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/attribute-sets/112233', []);
+		$response = $this->call('GET', 'api/entities/112233', []);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -264,38 +272,57 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	}
 	
 	
-	public function testGetAttributeSets()
+	public function testGetEntities()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__ . "\n");	
 
-		$response = $this->call('GET', 'api/attribute-sets', []);
+		$response = $this->call('GET', 'api/entities', []);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 3, count(json_decode($response->getContent())) );
+		$this->assertEquals( 6, count(json_decode($response->getContent())) );
 	}
 
 	public function testGetParams()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/attribute-sets', ['sort' => '-code', 'limit' => 2]);
+		$response = $this->call('GET', 'api/entities', ['sort' => ['fields.attribute3'], 'limit' => 3, 'offset' => 0]);
 
 		$this->d->dump(json_decode($response->getContent()));
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 3, count(json_decode($response->getContent(), true)) );
+		$this->assertEquals( 'value23', json_decode($response->getContent(), true)[0]['fields']['attribute3'] );
+		$this->assertEquals( 'value33', json_decode($response->getContent(), true)[2]['fields']['attribute3'] );
 	}
 
-	public function testGetWithInclude()
+	public function testGetFilters()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/attribute-sets', ['limit' => 2, 'include' => 'attributes, entity_type']);
+		$filter = [ 'fields.attribute1' => ['in' => ['value21']] ];
+
+		$response = $this->call('GET', 'api/entities', ['filter' => $filter]);
+
 		$this->d->dump(json_decode($response->getContent()));
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
 		
+		$this->assertEquals( 1, count(json_decode($response->getContent(), true)) );
+		$this->assertEquals( 'value21', json_decode($response->getContent(), true)[0]['fields']['attribute1'] );
+
+	}
+
+	public function testTypeRoutes()
+	{
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$response = $this->call('GET', 'api/tests', []);
+
+		$this->d->dump(json_decode($response->getContent()));
 		
+		$this->assertEquals( 3, count(json_decode($response->getContent(), true)) );
+		$this->assertEquals( 1, json_decode($response->getContent(), true)[0]['entity_type_id'] );
+
 	}
 }

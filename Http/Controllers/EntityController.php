@@ -10,18 +10,19 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetGetCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetFetchCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetCreateCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetUpdateCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetDeleteCommand;
+use Cookbook\Eav\Commands\Entities\EntityGetCommand;
+use Cookbook\Eav\Commands\Entities\EntityFetchCommand;
+use Cookbook\Eav\Commands\Entities\EntityCreateCommand;
+use Cookbook\Eav\Commands\Entities\EntityUpdateCommand;
+use Cookbook\Eav\Commands\Entities\EntityDeleteCommand;
 
 use Dingo\Api\Http\Response;
 
+
 /**
- * AttributeSetController class
+ * EntityController class
  *
- * RESTful Controller for attribute set resource
+ * RESTful Controller for every entity resource
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
@@ -29,11 +30,11 @@ use Dingo\Api\Http\Response;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class AttributeSetController extends ApiController
+class EntityController extends ApiController
 {
 	public function index()
 	{
-		$command = new AttributeSetGetCommand($this->request->all());
+		$command = new EntityGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
 		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
 		return $response;
@@ -41,9 +42,9 @@ class AttributeSetController extends ApiController
 
 	public function show($id)
 	{
-		$command = new AttributeSetFetchCommand($this->request->all(), $id);
+		$command = new EntityFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$id]);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entities.fetch', [$id]);
 		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
 		$response->header('Location', $link);
 		return $response;
@@ -51,9 +52,9 @@ class AttributeSetController extends ApiController
 
 	public function store()
 	{
-		$command = new AttributeSetCreateCommand($this->request->all());
+		$command = new EntityCreateCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$result->id]);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entities.fetch', [$result->id]);
 
 		$response = new Response($result->toArray(false, false), 201);
 		$response->header('Location', $link);
@@ -63,9 +64,9 @@ class AttributeSetController extends ApiController
 
 	public function update($id)
 	{
-		$command = new AttributeSetUpdateCommand($this->request->all(), $id);
+		$command = new EntityUpdateCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$id]);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entities.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);
 		$response->header('Location', $link);
 		return $response;
@@ -73,7 +74,7 @@ class AttributeSetController extends ApiController
 
 	public function destroy($id)
 	{
-		$command = new AttributeSetDeleteCommand($this->request->all(), $id);
+		$command = new EntityDeleteCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
 		return $this->response->noContent();
 	}

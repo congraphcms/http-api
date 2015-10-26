@@ -10,6 +10,14 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
+use Cookbook\Eav\Commands\EntityTypes\EntityTypeGetCommand;
+use Cookbook\Eav\Commands\EntityTypes\EntityTypeFetchCommand;
+use Cookbook\Eav\Commands\EntityTypes\EntityTypeCreateCommand;
+use Cookbook\Eav\Commands\EntityTypes\EntityTypeUpdateCommand;
+use Cookbook\Eav\Commands\EntityTypes\EntityTypeDeleteCommand;
+
+use Dingo\Api\Http\Response;
+
 /**
  * EntityTypeController class
  *
@@ -25,32 +33,48 @@ class EntityTypeController extends ApiController
 {
 	public function index()
 	{
-		return $this->api->call( 'entity-types.get', $this->request );
+		$command = new EntityTypeGetCommand($this->request->all());
+		$result = $this->dispatchCommand($command);
+		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		return $response;
 	}
 
 	public function show($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'entity-types.fetch', $this->request, $id );
+		$command = new EntityTypeFetchCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entity-types.fetch', [$id]);
+		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$response->header('Location', $link);
+		return $response;
 	}
 
 	public function store()
 	{
-		return $this->api->call( 'entity-types.create', $this->request );
+		$command = new EntityTypeCreateCommand($this->request->all());
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entity-types.fetch', [$result->id]);
+
+		$response = new Response($result->toArray(false, false), 201);
+		$response->header('Location', $link);
+
+		return $response;
 	}
 
 	public function update($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'entity-types.update', $this->request, $id );
+		$command = new EntityTypeUpdateCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entity-types.fetch', [$id]);
+		$response = new Response($result->toArray(false, false), 200);
+		$response->header('Location', $link);
+		return $response;
 	}
 
 	public function destroy($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'entity-types.delete', $this->request, $id );
+		$command = new EntityTypeDeleteCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		return $this->response->noContent();
 	}
 }

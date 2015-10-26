@@ -10,13 +10,24 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
+use Closure;
+use Cookbook\Core\Bus\CommandDispatcher;
+use Cookbook\Core\Exceptions\BadRequestException;
+use Cookbook\Core\Exceptions\Exception as CookbookException;
+use Cookbook\Core\Exceptions\NotFoundException;
+use Cookbook\Core\Exceptions\ValidationException;
+use Dingo\Api\Exception\ResourceException;
+use Dingo\Api\Routing\Helpers;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Config;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Cookbook\Api\Dispatcher as ApiDispatcher;
-use Cookbook\Core\Exceptions\Exception as CookbookException;
-use Cookbook\Core\Traits\MapperTrait;
+
+// use Cookbook\Api\Dispatcher as ApiDispatcher;
 
 /**
  * BaseApiController class
@@ -35,14 +46,13 @@ use Cookbook\Core\Traits\MapperTrait;
  */
 class ApiController extends Controller
 {
-	use MapperTrait;
-
+	use Helpers;
 	/**
-	 * API Dispatcher for api calls
+	 * Command Bus Dispatcher
 	 * 
 	 * @var Illuminate\Contracts\Bus\Dispatcher
 	 */
-	public $api;
+	public $bus;
 
 	/**
 	 * Current request
@@ -50,12 +60,83 @@ class ApiController extends Controller
 	 * @var Illuminate\Http\Request
 	 */
 	public $request;
+
+	/**
+	 * Should meta data be included in result
+	 * 
+	 * @var boolean
+	 */
+	public $includeMeta;
+
+	/**
+	 * Should included object be nested in result or 
+	 * separated in their own array
+	 * 
+	 * @var boolean
+	 */
+	public $nestedInclude;
 	
 
-	public function __construct(ApiDispatcher $api, Request $request)
+	public function __construct(CommandDispatcher $bus, Request $request)
 	{
-		$this->api = $api;
+		$this->bus = $bus;
 		$this->request = $request;
+		$this->includeMeta = Config::get('api.include_metadata');
+		$this->nestedInclude = Config::get('api.nested_include');
+	}
+
+	/**
+	 * Dispatch a command and handle exceptions
+	 *
+	 * @param  string  $endpoint
+	 * 
+	 * @return object
+	 */
+	protected function dispatchCommand($command, Closure $afterResolving = null)
+	{
+		try
+		{
+			return $this->bus->dispatch($command, $afterResolving);
+		}
+		catch (Exception $e)
+		{
+			$this->handleException($e);
+		}
+	}
+
+	protected function handleException(Exception $e)
+	{
+		// if it's a cookbook exception, 
+		// use it's toArray function to ger all errors
+		if( $e instanceOf CookbookException)
+		{
+			$this->handleCookbookException($e);
+		}
+
+		// if it's some other exception throw that exception
+		throw $e;
+	}
+
+	protected function handleCookbookException(CookbookException $e)
+	{
+
+		$errors = $e->getErrors();
+		$message = $e->getMessage();
+
+		switch (true) {
+			case $e instanceof ValidationException:
+				throw new ResourceException($message, $errors);
+				break;
+			case $e instanceof NotFoundException:
+				throw new NotFoundHttpException($message);
+				break;
+			case $e instanceof BadRequestException:
+				throw new BadRequestHttpException($message);
+				break;
+			default:
+				throw $e;
+				break;
+		}
 	}
 
 }

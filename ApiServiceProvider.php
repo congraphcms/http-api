@@ -34,14 +34,17 @@ class ApiServiceProvider extends ServiceProvider {
 	*/
 	public function register() {
 		$this->mergeConfigFrom(realpath(__DIR__ . '/config/cookbook.php'), 'cookbook');
+		$this->mergeConfigFrom(realpath(__DIR__ . '/config/api.php'), 'api');
 		$this->registerServiceProviders();
 
-		$this->app->singleton('Cookbook\Api\Dispatcher', function($app){
-			return new Dispatcher(
-				$app->make('Illuminate\Contracts\Bus\Dispatcher'),
-				$app->make('Illuminate\Contracts\Events\Dispatcher')
-			);
-		});
+		// $this->app->singleton('Cookbook\Api\Dispatcher', function($app){
+		// 	return new Dispatcher(
+		// 		$app->make('Illuminate\Contracts\Bus\Dispatcher'),
+		// 		$app->make('Illuminate\Contracts\Events\Dispatcher')
+		// 	);
+		// });
+
+		$this->app['router']->middleware('cb.gettype', 'Cookbook\Api\Http\Middleware\GetEntityType');
 	}
 
 	/**
@@ -53,10 +56,12 @@ class ApiServiceProvider extends ServiceProvider {
 		$this->publishes([
 			__DIR__.'/config/cookbook.php' => config_path('cookbook.php'),
 		]);
+		$this->publishes([
+			__DIR__.'/config/api.php' => config_path('api.php'),
+		]);
+		include __DIR__ . '/Http/routes.php';
 
-		include __DIR__ . '/routes.php';
-
-		$this->mapApiCommands();
+		// $this->mapApiCommands();
 	}
 
 	/**
@@ -64,15 +69,16 @@ class ApiServiceProvider extends ServiceProvider {
 	 * 
 	 * @return void
 	 */
-	protected function registerServiceProviders(){
+	protected function registerServiceProviders()
+	{
 
-		// Events
-		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Api\Events\EventsServiceProvider');
+		// // Events
+		// // -----------------------------------------------------------------------------
+		// $this->app->register('Cookbook\Api\Events\EventsServiceProvider');
 
-		// Handlers
-		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Api\Handlers\HandlersServiceProvider');
+		// // Handlers
+		// // -----------------------------------------------------------------------------
+		// $this->app->register('Cookbook\Api\Handlers\HandlersServiceProvider');
 	}
 
 	/**

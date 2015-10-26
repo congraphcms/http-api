@@ -10,6 +10,15 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
+use Cookbook\Eav\Commands\Attributes\AttributeGetCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeFetchCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeCreateCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeUpdateCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeDeleteCommand;
+
+use Dingo\Api\Http\Response;
+
+
 /**
  * AttributeController class
  *
@@ -25,32 +34,48 @@ class AttributeController extends ApiController
 {
 	public function index()
 	{
-		return $this->api->call( 'attributes.get', $this->request );
+		$command = new AttributeGetCommand($this->request->all());
+		$result = $this->dispatchCommand($command);
+		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		return $response;
 	}
 
 	public function show($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'attributes.fetch', $this->request, $id );
+		$command = new AttributeFetchCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
+		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$response->header('Location', $link);
+		return $response;
 	}
 
 	public function store()
 	{
-		return $this->api->call( 'attributes.create', $this->request );
+		$command = new AttributeCreateCommand($this->request->all());
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$result->id]);
+
+		$response = new Response($result->toArray(false, false), 201);
+		$response->header('Location', $link);
+
+		return $response;
 	}
 
 	public function update($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'attributes.update', $this->request, $id );
+		$command = new AttributeUpdateCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
+		$response = new Response($result->toArray(false, false), 200);
+		$response->header('Location', $link);
+		return $response;
 	}
 
 	public function destroy($id)
 	{
-		$this->id = $id;
-
-		return $this->api->call( 'attributes.delete', $this->request, $id );
+		$command = new AttributeDeleteCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		return $this->response->noContent();
 	}
 }
