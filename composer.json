@@ -12,21 +12,12 @@
 
     "require": {
         "php": ">=5.4.0",
-        "cookbook/core": "dev-master",
-        "cookbook/contracts": "dev-master",
         "cookbook/eav": "dev-master",
         "dingo/api": "1.0.*@dev"
     },
 
     "repositories": [
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/contracts.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/core.git"
-        },
+        
         {
             "type": "git",
             "url":  "git@bitbucket.org:cookbookcms/eav.git"
