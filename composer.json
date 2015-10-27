@@ -17,7 +17,14 @@
     },
 
     "repositories": [
-        
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/contracts.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/core.git"
+        },  
         {
             "type": "git",
             "url":  "git@bitbucket.org:cookbookcms/eav.git"
