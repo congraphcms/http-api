@@ -1,7 +1,26 @@
-<phpunit bootstrap="vendor/autoload.php">
-  <testsuites>
-    <testsuite name="EAV Test Suite">
-      <directory>./tests/</directory>
-    </testsuite>
-  </testsuites>
+<phpunit bootstrap="vendor/autoload.php" 
+		 backupGlobals="false"
+		 backupStaticAttributes="false"
+		 colors="true"
+		 convertErrorsToExceptions="true"
+		 convertNoticesToExceptions="true"
+		 convertWarningsToExceptions="true"
+		 processIsolation="false"
+		 stopOnFailure="false">
+	<testsuites>
+		<testsuite name="EAV Test Suite">
+			<directory>./tests/</directory>
+		</testsuite>
+	</testsuites>
+
+	<php>
+		<env name="APP_ENV" value="testing"/>
+		<env name="CACHE_DRIVER" value="file"/>
+		<env name="SESSION_DRIVER" value="array"/>
+		<env name="QUEUE_DRIVER" value="sync"/>
+
+		<env name="API_SUBTYPE" value="CB"/>
+		<env name="API_PREFIX" value="api"/>
+		<env name="INCLUDE_METADATA" value="0"/>
+	</php>
 </phpunit>

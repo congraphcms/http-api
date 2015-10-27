@@ -34,7 +34,6 @@ class ApiServiceProvider extends ServiceProvider {
 	*/
 	public function register() {
 		$this->mergeConfigFrom(realpath(__DIR__ . '/config/cookbook.php'), 'cookbook');
-		$this->mergeConfigFrom(realpath(__DIR__ . '/config/api.php'), 'api');
 		$this->registerServiceProviders();
 
 		// $this->app->singleton('Cookbook\Api\Dispatcher', function($app){
@@ -55,9 +54,6 @@ class ApiServiceProvider extends ServiceProvider {
 	public function boot() {
 		$this->publishes([
 			__DIR__.'/config/cookbook.php' => config_path('cookbook.php'),
-		]);
-		$this->publishes([
-			__DIR__.'/config/api.php' => config_path('api.php'),
 		]);
 		include __DIR__ . '/Http/routes.php';
 

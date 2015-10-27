@@ -5,7 +5,7 @@ use Illuminate\Support\Debug\Dumper;
 
 // include_once(realpath(__DIR__.'/../LaravelMocks.php'));
 
-class AttributeSetTest extends Orchestra\Testbench\TestCase
+class EntityTypeTest extends Orchestra\Testbench\TestCase
 {
 
 	public function setUp()
