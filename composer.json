@@ -30,6 +30,10 @@
         {
             "type": "git",
             "url":  "git@bitbucket.org:cookbookcms/eav.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/filesystem.git"
         }
     ],
 

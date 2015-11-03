@@ -70,6 +70,22 @@ $api->version('v1', function ($api) {
 
 	});
 
+	// Files
+	$api->group(['prefix' => 'files'], function($api){
+
+		// Create
+		$api->post( '/', [ 'as' => 'files.create', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@store' ] );
+		// Update
+		$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'files.update', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@update' ] );
+		// Delete
+		$api->delete( '/{id}', [ 'as' => 'files.delete', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@destroy' ] );
+		// Get
+		$api->get( '/', [ 'as' => 'files.get', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@index' ] );
+		// Fetch
+		$api->get( '/{id}', [ 'as' => 'files.fetch', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@show' ] );
+
+	});
+
 	// Entities (with type prefix)
 	$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
 

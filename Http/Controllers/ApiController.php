@@ -123,7 +123,8 @@ class ApiController extends Controller
 		$errors = $e->getErrors();
 		$message = $e->getMessage();
 
-		switch (true) {
+		switch (true)
+		{
 			case $e instanceof ValidationException:
 				throw new ResourceException($message, $errors);
 				break;
