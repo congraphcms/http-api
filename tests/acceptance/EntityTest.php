@@ -4,6 +4,12 @@ use Illuminate\Support\Facades\Cache;
 use Cookbook\Core\Facades\Trunk;
 use Illuminate\Support\Debug\Dumper;
 
+require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClearDB.php');
+
 class EntityTest extends Orchestra\Testbench\TestCase
 {
 
@@ -17,11 +23,34 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		// path unless `--path` option is available.
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/filesystem/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/locales/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Api\Seeders\TestDbSeeder'
+			'--class' => 'EavDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'LocaleDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'WorkflowDbSeeder'
 		]);
 
 		$this->d = new Dumper();
@@ -33,7 +62,11 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
 		Trunk::forgetAll();
-		$this->artisan('migrate:reset');
+		// $this->artisan('db:seed', [
+		// 	'--class' => 'ClearDB'
+		// ]);
+
+		DB::disconnect();
 		
 		parent::tearDown();
 	}
@@ -78,7 +111,15 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
+		return [
+			'Cookbook\Core\CoreServiceProvider', 
+			'Cookbook\Locales\LocalesServiceProvider', 
+			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Filesystem\FilesystemServiceProvider',
+			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\Api\ApiServiceProvider',
+			'Dingo\Api\Provider\LaravelServiceProvider'
+		];
 	}
 
 	public function testCreateEntity()
@@ -86,9 +127,8 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'type' => 'tests',
+			'entity_type' => 'tests',
 			'attribute_set' => ['id' => 1],
-			'locale_id' => 0,
 			'fields' => [
 				'attribute1' => 'some_unique_value',
 				'attribute2' => ''
@@ -106,7 +146,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'fields' => [
 				'attribute1' => 'some_unique_value',
 				'attribute2' => '',
-				'attribute3' => ''
+				'attribute3' => ["en_US" => "", "fr_FR" => ""]
 			]
 		]);
 
@@ -119,9 +159,8 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'type' => 'tests',
+			'entity_type' => 'tests',
 			'attribute_set' => ['id' => 1],
-			'locale_id' => 0,
 			'fields' => [
 				'attribute1' => ''
 			]
@@ -135,7 +174,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'entities' => [
+				'entity' => [
 					'fields' => [
 						'attribute1' => [ 'This field is required.' ]
 					]
@@ -152,7 +191,6 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'locale_id' => 0,
 			'fields' => [
 				'attribute1' => 'changed value'
 			]
@@ -193,7 +231,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'entities' => [
+				'entity' => [
 					'fields' => [
 						'attribute1' => [ 'This field is required.' ]
 					]
@@ -250,7 +288,10 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'fields' => [
 				'attribute1' => 'value1',
 				'attribute2' => 'value2',
-				'attribute3' => 'value3'
+				'attribute3' => [
+					'en_US' => 'value3-en',
+					'fr_FR' => 'value3-fr'
+				]
 			]
 		]);
 	}
@@ -282,7 +323,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 6, count(json_decode($response->getContent())) );
+		$this->assertEquals( 4, count(json_decode($response->getContent())) );
 	}
 
 	public function testGetParams()
@@ -294,22 +335,20 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		$this->d->dump(json_decode($response->getContent()));
 
 		$this->assertEquals( 3, count(json_decode($response->getContent(), true)) );
-		$this->assertEquals( 'value23', json_decode($response->getContent(), true)[0]['fields']['attribute3'] );
-		$this->assertEquals( 'value33', json_decode($response->getContent(), true)[2]['fields']['attribute3'] );
 	}
 
 	public function testGetFilters()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$filter = [ 'fields.attribute1' => ['in' => ['value21']] ];
+		$filter = [ 'fields.attribute1' => ['in' => ['value12']] ];
 
 		$response = $this->call('GET', 'api/entities', ['filter' => $filter]);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
 		$this->assertEquals( 1, count(json_decode($response->getContent(), true)) );
-		$this->assertEquals( 'value21', json_decode($response->getContent(), true)[0]['fields']['attribute1'] );
+		$this->assertEquals( 'value12', json_decode($response->getContent(), true)[0]['fields']['attribute1'] );
 
 	}
 
@@ -321,7 +360,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 		
-		$this->assertEquals( 3, count(json_decode($response->getContent(), true)) );
+		$this->assertEquals( 4, count(json_decode($response->getContent(), true)) );
 		$this->assertEquals( 1, json_decode($response->getContent(), true)[0]['entity_type_id'] );
 
 	}

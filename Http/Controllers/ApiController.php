@@ -81,8 +81,8 @@ class ApiController extends Controller
 	{
 		$this->bus = $bus;
 		$this->request = $request;
-		$this->includeMeta = Config::get('cookbook.include_metadata');
-		$this->nestedInclude = Config::get('cookbook.nested_include');
+		$this->includeMeta = Config::get('cb.api.include_metadata');
+		$this->nestedInclude = Config::get('cb.api.nested_include');
 	}
 
 	/**

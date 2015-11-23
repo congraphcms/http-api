@@ -6,7 +6,13 @@ use Illuminate\Support\Debug\Dumper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class AttributeTest extends Orchestra\Testbench\TestCase
+require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClearDB.php');
+
+class FileTest extends Orchestra\Testbench\TestCase
 {
 
 	public function setUp()
@@ -19,18 +25,38 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		// path unless `--path` option is available.
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/database/migrations'),
 		]);
+
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/filesystem/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/filesystem/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/locales/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Api\Seeders\TestDbSeeder'
+			'--class' => 'EavDbSeeder'
 		]);
+
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Api\Seeders\FileDbSeeder'
+			'--class' => 'LocaleDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'WorkflowDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'FileDbSeeder'
 		]);
 
 		$this->d = new Dumper();
@@ -38,10 +64,10 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		Storage::deleteDir('files');
 		Storage::deleteDir('uploads');
 
-		Storage::copy('temp/test.jpg', 'uploads/test.jpg');
-
-		Storage::copy('temp/test.jpg', 'files/test1.jpg');
+		Storage::copy('temp/test.jpg', 'files/test.jpg');
 		Storage::copy('temp/test.jpg', 'files/test2.jpg');
+
+		Storage::copy('temp/test.jpg', 'uploads/1.jpg');
 
 	}
 
@@ -49,11 +75,15 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
-		// Trunk::forgetAll();
-		$this->artisan('migrate:reset');
+		Trunk::forgetAll();
+		// $this->artisan('db:seed', [
+		// 	'--class' => 'ClearDB'
+		// ]);
 		Storage::deleteDir('files');
 		Storage::deleteDir('uploads');
 		
+		DB::disconnect();
+
 		parent::tearDown();
 	}
 
@@ -104,7 +134,15 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Filesystem\FilesystemServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
+		return [
+			'Cookbook\Core\CoreServiceProvider', 
+			'Cookbook\Locales\LocalesServiceProvider', 
+			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Filesystem\FilesystemServiceProvider',
+			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\Api\ApiServiceProvider',
+			'Dingo\Api\Provider\LaravelServiceProvider'
+		];
 	}
 
 	public function testCreateFile()
@@ -116,7 +154,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'description' => 'File description'
 		];
 
-		$file = new UploadedFile(realpath(__DIR__ . '/../storage/uploads/test.jpg'), 'test.jpg', 'image/jpeg', Storage::getSize('uploads/test.jpg'), null, true);
+		$file = new UploadedFile(realpath(__DIR__ . '/../storage/uploads/1.jpg'), '1.jpg', 'image/jpeg', Storage::getSize('uploads/1.jpg'), null, true);
 
 		$response = $this->call('POST', 'api/files', $params, [], ['file' => $file]);
 
@@ -128,12 +166,12 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		$this->assertTrue(Storage::has('files/test.jpg'));
 
 		$this->seeJson([
-			'url' => 'files/test.jpg',
+			'url' => 'files/1.jpg',
 			'caption' => 'File test',
 			'description' => 'File description'
 		]);
 
-		$this->seeInDatabase('files', ['url' => 'files/test.jpg']);
+		$this->seeInDatabase('files', ['url' => 'files/1.jpg']);
 
 	}
 
@@ -222,7 +260,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 		$this->assertEquals(204, $response->status());
 
-		$this->assertFalse(Storage::has('files/test1.jpg'));
+		$this->assertFalse(Storage::has('files/test.jpg'));
 
 		$this->dontSeeInDatabase('files', ['id' => 1]);
 	}
@@ -255,8 +293,8 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 		$this->seeJson([
 			'id' => 1,
-			'url' => 'files/test1.jpg',
-			'name' => 'test1.jpg',
+			'url' => 'files/test.jpg',
+			'name' => 'test.jpg',
 		]);
 	}
 

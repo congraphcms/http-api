@@ -2,8 +2,14 @@
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Debug\Dumper;
+use Cookbook\Core\Facades\Trunk;
 
 // include_once(realpath(__DIR__.'/../LaravelMocks.php'));
+require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
 class AttributeSetTest extends Orchestra\Testbench\TestCase
 {
@@ -18,16 +24,39 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		// path unless `--path` option is available.
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/filesystem/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/locales/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Api\Seeders\TestDbSeeder'
+			'--class' => 'EavDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'LocaleDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'WorkflowDbSeeder'
 		]);
 
 		$this->d = new Dumper();
 
-
+		$this->createApplication();
 		// $this->app = $this->createApplication();
 
 		// $this->bus = $this->app->make('Illuminate\Contracts\Bus\Dispatcher');
@@ -38,8 +67,14 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
-		
-		$this->artisan('migrate:reset');
+		// Trunk::forgetAll();
+
+		// $this->artisan('db:seed', [
+		// 	'--class' => 'ClearDB'
+		// ]);
+
+		DB::disconnect();
+
 		parent::tearDown();
 	}
 
@@ -83,7 +118,16 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Api\ApiServiceProvider', 'Cookbook\Eav\EavServiceProvider', 'Cookbook\Core\CoreServiceProvider', 'Dingo\Api\Provider\LaravelServiceProvider'];
+		return [
+			'Cookbook\Core\CoreServiceProvider', 
+			'Cookbook\Locales\LocalesServiceProvider', 
+			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Filesystem\FilesystemServiceProvider',
+			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\Api\ApiServiceProvider',
+			'Dingo\Api\Provider\LaravelServiceProvider'
+		];
+		
 	}
 
 	public function testCreateAttributeSet()
@@ -144,7 +188,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'attribute-sets' => [
+				'attribute-set' => [
 					'code' => ['The code field is required.']
 				]
 			]
@@ -192,7 +236,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'attribute-sets' => [
+				'attribute-set' => [
 					'code' => ['The code field is required.']
 				]
 			]
@@ -274,7 +318,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 3, count(json_decode($response->getContent())) );
+		$this->assertEquals( 4, count(json_decode($response->getContent())) );
 	}
 
 	public function testGetParams()

@@ -15,6 +15,7 @@
         "cookbook/contracts": "dev-master",
         "cookbook/core": "dev-master",
         "cookbook/eav": "dev-master",
+        "cookbook/oauth": "dev-master",
         "dingo/api": "1.0.*@dev"
     },
 
@@ -34,6 +35,18 @@
         {
             "type": "git",
             "url":  "git@bitbucket.org:cookbookcms/filesystem.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/locales.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/workflows.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/oauth.git"
         }
     ],
 

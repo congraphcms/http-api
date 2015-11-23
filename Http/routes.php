@@ -86,6 +86,70 @@ $api->version('v1', function ($api) {
 
 	});
 
+	// Locales
+	$api->group(['prefix' => 'locales'], function($api){
+
+		// Create
+		$api->post( '/', [ 'as' => 'locales.create', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@store' ] );
+		// Update
+		$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'locales.update', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@update' ] );
+		// Delete
+		$api->delete( '/{id}', [ 'as' => 'locales.delete', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@destroy' ] );
+		// Get
+		$api->get( '/', [ 'as' => 'locales.get', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@index' ] );
+		// Fetch
+		$api->get( '/{id}', [ 'as' => 'locales.fetch', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@show' ] );
+
+	});
+
+	// Workflows
+	$api->group(['prefix' => 'workflows'], function($api){
+
+		// Create
+		$api->post( '/', [ 'as' => 'workflows.create', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@store' ] );
+		// Update
+		$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'workflows.update', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@update' ] );
+		// Delete
+		$api->delete( '/{id}', [ 'as' => 'workflows.delete', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@destroy' ] );
+		// Get
+		$api->get( '/', [ 'as' => 'workflows.get', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@index' ] );
+		// Fetch
+		$api->get( '/{id}', [ 'as' => 'workflows.fetch', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@show' ] );
+
+	});
+
+	// Workflow points
+	$api->group(['prefix' => 'workflow-points'], function($api){
+
+		// Create
+		$api->post( '/', [ 'as' => 'workflow-points.create', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@store' ] );
+		// Update
+		$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'workflow-points.update', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@update' ] );
+		// Delete
+		$api->delete( '/{id}', [ 'as' => 'workflow-points.delete', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@destroy' ] );
+		// Get
+		$api->get( '/', [ 'as' => 'workflow-points.get', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@index' ] );
+		// Fetch
+		$api->get( '/{id}', [ 'as' => 'workflow-points.fetch', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@show' ] );
+
+	});
+
+	// Users
+	$api->group(['prefix' => 'users'], function($api){
+
+		// Create
+		$api->post( '/', [ 'as' => 'users.create', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@store' ] );
+		// Update
+		$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'users.update', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@update' ] );
+		// Delete
+		$api->delete( '/{id}', [ 'as' => 'users.delete', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@destroy' ] );
+		// Get
+		$api->get( '/', [ 'as' => 'users.get', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@index' ] );
+		// Fetch
+		$api->get( '/{id}', [ 'as' => 'users.fetch', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@show' ] );
+
+	});
+
 	// Entities (with type prefix)
 	$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
 
