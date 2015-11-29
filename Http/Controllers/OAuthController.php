@@ -46,7 +46,6 @@ class AttributeController extends ApiController
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
 		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
-		$response->header('Location', $link);
 		return $response;
 	}
 
@@ -57,8 +56,6 @@ class AttributeController extends ApiController
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$result->id]);
 
 		$response = new Response($result->toArray(false, false), 201);
-		$response->header('Location', $link);
-
 		return $response;
 	}
 
@@ -68,7 +65,6 @@ class AttributeController extends ApiController
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);
-		$response->header('Location', $link);
 		return $response;
 	}
 

@@ -46,7 +46,6 @@ class WorkflowController extends ApiController
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$id]);
 		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
-		$response->header('Location', $link);
 		return $response;
 	}
 
@@ -57,7 +56,6 @@ class WorkflowController extends ApiController
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$result->id]);
 
 		$response = new Response($result->toArray(false, false), 201);
-		$response->header('Location', $link);
 
 		return $response;
 	}
@@ -68,7 +66,6 @@ class WorkflowController extends ApiController
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);
-		$response->header('Location', $link);
 		return $response;
 	}
 
