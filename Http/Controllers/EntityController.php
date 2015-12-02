@@ -51,7 +51,16 @@ class EntityController extends ApiController
 
 	public function store()
 	{
-		$command = new EntityCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new EntityCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entities.fetch', [$result->id]);
 
@@ -62,7 +71,16 @@ class EntityController extends ApiController
 
 	public function update($id)
 	{
-		$command = new EntityUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new EntityUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('entities.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);

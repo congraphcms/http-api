@@ -51,7 +51,16 @@ class UserController extends ApiController
 
 	public function store()
 	{
-		$command = new UserCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new UserCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('users.fetch', [$result->id]);
 
@@ -62,7 +71,16 @@ class UserController extends ApiController
 
 	public function update($id)
 	{
-		$command = new UserUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new UserUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('users.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);

@@ -51,7 +51,16 @@ class LocaleController extends ApiController
 
 	public function store()
 	{
-		$command = new LocaleCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new LocaleCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('locales.fetch', [$result->id]);
 
@@ -62,7 +71,16 @@ class LocaleController extends ApiController
 
 	public function update($id)
 	{
-		$command = new LocaleUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new LocaleUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('locales.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);

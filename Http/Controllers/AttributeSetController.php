@@ -50,7 +50,16 @@ class AttributeSetController extends ApiController
 
 	public function store()
 	{
-		$command = new AttributeSetCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new AttributeSetCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$result->id]);
 
@@ -61,7 +70,16 @@ class AttributeSetController extends ApiController
 
 	public function update($id)
 	{
-		$command = new AttributeSetUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new AttributeSetUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);

@@ -51,7 +51,16 @@ class FileController extends ApiController
 
 	public function store()
 	{
-		$command = new FileCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new FileCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('files.fetch', [$result->id]);
 
@@ -62,7 +71,16 @@ class FileController extends ApiController
 
 	public function update($id)
 	{
-		$command = new FileUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new FileUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('files.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);

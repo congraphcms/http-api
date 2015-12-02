@@ -51,7 +51,16 @@ class WorkflowPointController extends ApiController
 
 	public function store()
 	{
-		$command = new WorkflowPointCreateCommand($this->request->all());
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new WorkflowPointCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflow-points.fetch', [$result->id]);
 
@@ -62,7 +71,16 @@ class WorkflowPointController extends ApiController
 
 	public function update($id)
 	{
-		$command = new WorkflowPointUpdateCommand($this->request->all(), $id);
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new WorkflowPointUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflow-points.fetch', [$id]);
 		$response = new Response($result->toArray(false, false), 200);
