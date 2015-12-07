@@ -323,7 +323,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 4, count(json_decode($response->getContent())) );
+		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -334,7 +334,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 
-		$this->assertEquals( 3, count(json_decode($response->getContent(), true)) );
+		$this->assertEquals( 3, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetFilters()
@@ -347,8 +347,8 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 		
-		$this->assertEquals( 1, count(json_decode($response->getContent(), true)) );
-		$this->assertEquals( 'value12', json_decode($response->getContent(), true)[0]['fields']['attribute1'] );
+		$this->assertEquals( 1, count(json_decode($response->getContent(), true)['data']) );
+		$this->assertEquals( 'value12', json_decode($response->getContent(), true)['data'][0]['fields']['attribute1'] );
 
 	}
 
@@ -360,8 +360,8 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 		
-		$this->assertEquals( 4, count(json_decode($response->getContent(), true)) );
-		$this->assertEquals( 1, json_decode($response->getContent(), true)[0]['entity_type_id'] );
+		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
+		$this->assertEquals( 1, json_decode($response->getContent(), true)['data'][0]['entity_type_id'] );
 
 	}
 }

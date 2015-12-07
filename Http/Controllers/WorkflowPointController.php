@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointGetCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointCreateCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointUpdateCommand;
 use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointDeleteCommand;
-
+use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointFetchCommand;
+use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointGetCommand;
+use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -36,7 +36,10 @@ class WorkflowPointController extends ApiController
 	{
 		$command = new WorkflowPointGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -44,8 +47,10 @@ class WorkflowPointController extends ApiController
 	{
 		$command = new WorkflowPointFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflow-points.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -62,10 +67,10 @@ class WorkflowPointController extends ApiController
 		}
 		$command = new WorkflowPointCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflow-points.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
-
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 		return $response;
 	}
 
@@ -82,8 +87,10 @@ class WorkflowPointController extends ApiController
 		}
 		$command = new WorkflowPointUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflow-points.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

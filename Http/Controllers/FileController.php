@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Filesystem\Commands\Files\FileGetCommand;
-use Cookbook\Filesystem\Commands\Files\FileFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\Filesystem\Commands\Files\FileCreateCommand;
-use Cookbook\Filesystem\Commands\Files\FileUpdateCommand;
 use Cookbook\Filesystem\Commands\Files\FileDeleteCommand;
-
+use Cookbook\Filesystem\Commands\Files\FileFetchCommand;
+use Cookbook\Filesystem\Commands\Files\FileGetCommand;
+use Cookbook\Filesystem\Commands\Files\FileUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -36,7 +36,10 @@ class FileController extends ApiController
 	{
 		$command = new FileGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -44,8 +47,10 @@ class FileController extends ApiController
 	{
 		$command = new FileFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('files.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -62,9 +67,10 @@ class FileController extends ApiController
 		}
 		$command = new FileCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('files.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 
 		return $response;
 	}
@@ -82,8 +88,10 @@ class FileController extends ApiController
 		}
 		$command = new FileUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('files.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

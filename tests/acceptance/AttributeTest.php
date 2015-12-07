@@ -311,7 +311,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 15, count(json_decode($response->getContent())) );
+		$this->assertEquals( 15, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -322,6 +322,6 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 
-		$this->assertEquals( 3, count(json_decode($response->getContent())) );
+		$this->assertEquals( 3, count(json_decode($response->getContent(), true)['data']) );
 	}
 }

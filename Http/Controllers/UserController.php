@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\OAuth\Commands\Users\UserGetCommand;
-use Cookbook\OAuth\Commands\Users\UserFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\OAuth\Commands\Users\UserCreateCommand;
-use Cookbook\OAuth\Commands\Users\UserUpdateCommand;
 use Cookbook\OAuth\Commands\Users\UserDeleteCommand;
-
+use Cookbook\OAuth\Commands\Users\UserFetchCommand;
+use Cookbook\OAuth\Commands\Users\UserGetCommand;
+use Cookbook\OAuth\Commands\Users\UserUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -36,7 +36,10 @@ class UserController extends ApiController
 	{
 		$command = new UserGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -44,8 +47,10 @@ class UserController extends ApiController
 	{
 		$command = new UserFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('users.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -62,10 +67,10 @@ class UserController extends ApiController
 		}
 		$command = new UserCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('users.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
-
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 		return $response;
 	}
 
@@ -82,8 +87,10 @@ class UserController extends ApiController
 		}
 		$command = new UserUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('users.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

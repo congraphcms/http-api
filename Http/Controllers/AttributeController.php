@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Eav\Commands\Attributes\AttributeGetCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\Eav\Commands\Attributes\AttributeCreateCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeUpdateCommand;
 use Cookbook\Eav\Commands\Attributes\AttributeDeleteCommand;
-
+use Cookbook\Eav\Commands\Attributes\AttributeFetchCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeGetCommand;
+use Cookbook\Eav\Commands\Attributes\AttributeUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -36,7 +36,10 @@ class AttributeController extends ApiController
 	{
 		$command = new AttributeGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -44,8 +47,10 @@ class AttributeController extends ApiController
 	{
 		$command = new AttributeFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -62,9 +67,10 @@ class AttributeController extends ApiController
 		}
 		$command = new AttributeCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 
 		return $response;
 	}
@@ -82,8 +88,10 @@ class AttributeController extends ApiController
 		}
 		$command = new AttributeUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

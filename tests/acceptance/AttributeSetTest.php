@@ -155,8 +155,8 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'name' => 'Test Attr Set',
 			'entity_type_id' => 1,
 			'attributes' => [
-				['id' => 1, 'type' => 'attribute'],
-				['id' => 2, 'type' => 'attribute']
+				['id' => 1, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/1']],
+				['id' => 2, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/2']]
 			]
 		]);
 
@@ -284,9 +284,9 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		$this->seeJson([
 			'code' => 'attribute_set1',
 			'attributes' => [
-				[ 'id' => 2, 'type' => 'attribute' ],
-				[ 'id' => 1, 'type' => 'attribute' ],
-				[ 'id' => 3, 'type' => 'attribute' ]
+				[ 'id' => 2, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/2'] ],
+				[ 'id' => 1, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/1'] ],
+				[ 'id' => 3, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/3'] ]
 			]
 		]);
 	}
@@ -318,7 +318,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 4, count(json_decode($response->getContent())) );
+		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -329,7 +329,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetWithInclude()
@@ -338,7 +338,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 		$response = $this->call('GET', 'api/attribute-sets', ['limit' => 2, 'include' => 'attributes, entity_type']);
 		$this->d->dump(json_decode($response->getContent()));
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 		
 		
 	}

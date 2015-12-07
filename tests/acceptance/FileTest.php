@@ -325,7 +325,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -336,6 +336,6 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 	}
 }

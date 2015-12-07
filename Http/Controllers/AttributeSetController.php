@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetGetCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\Eav\Commands\AttributeSets\AttributeSetCreateCommand;
-use Cookbook\Eav\Commands\AttributeSets\AttributeSetUpdateCommand;
 use Cookbook\Eav\Commands\AttributeSets\AttributeSetDeleteCommand;
-
+use Cookbook\Eav\Commands\AttributeSets\AttributeSetFetchCommand;
+use Cookbook\Eav\Commands\AttributeSets\AttributeSetGetCommand;
+use Cookbook\Eav\Commands\AttributeSets\AttributeSetUpdateCommand;
 use Dingo\Api\Http\Response;
 
 /**
@@ -35,7 +35,10 @@ class AttributeSetController extends ApiController
 	{
 		$command = new AttributeSetGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -43,8 +46,10 @@ class AttributeSetController extends ApiController
 	{
 		$command = new AttributeSetFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -61,9 +66,10 @@ class AttributeSetController extends ApiController
 		}
 		$command = new AttributeSetCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 
 		return $response;
 	}
@@ -81,8 +87,10 @@ class AttributeSetController extends ApiController
 		}
 		$command = new AttributeSetUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attribute-sets.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

@@ -10,12 +10,12 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Workflows\Commands\Workflows\WorkflowGetCommand;
-use Cookbook\Workflows\Commands\Workflows\WorkflowFetchCommand;
+use Cookbook\Api\Linker;
 use Cookbook\Workflows\Commands\Workflows\WorkflowCreateCommand;
-use Cookbook\Workflows\Commands\Workflows\WorkflowUpdateCommand;
 use Cookbook\Workflows\Commands\Workflows\WorkflowDeleteCommand;
-
+use Cookbook\Workflows\Commands\Workflows\WorkflowFetchCommand;
+use Cookbook\Workflows\Commands\Workflows\WorkflowGetCommand;
+use Cookbook\Workflows\Commands\Workflows\WorkflowUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -36,7 +36,10 @@ class WorkflowController extends ApiController
 	{
 		$command = new WorkflowGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -44,8 +47,10 @@ class WorkflowController extends ApiController
 	{
 		$command = new WorkflowFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 
@@ -62,10 +67,10 @@ class WorkflowController extends ApiController
 		}
 		$command = new WorkflowCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
-
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 201);
 		return $response;
 	}
 
@@ -82,8 +87,10 @@ class WorkflowController extends ApiController
 		}
 		$command = new WorkflowUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('workflows.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
+		$links = Linker::getLinks($result);
+		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
+		$parsedResult['links'] = $links;
+		$response = new Response($parsedResult, 200);
 		return $response;
 	}
 

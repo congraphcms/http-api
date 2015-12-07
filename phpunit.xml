@@ -21,6 +21,6 @@
 
 		<env name="API_SUBTYPE" value="CB"/>
 		<env name="API_PREFIX" value="api"/>
-		<env name="INCLUDE_METADATA" value="0"/>
+		<env name="INCLUDE_METADATA" value="1"/>
 	</php>
 </phpunit>

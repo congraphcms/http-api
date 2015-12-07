@@ -284,9 +284,9 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->seeJson([
 			'code' => 'tests',
 			'attribute_sets' => [
-				[ 'id' => 1, 'type' => 'attribute-set' ],
-				[ 'id' => 2, 'type' => 'attribute-set' ],
-				[ 'id' => 3, 'type' => 'attribute-set' ]
+				[ 'id' => 1, 'type' => 'attribute-set', 'links' => ['self' => 'http://localhost/api/attribute-sets/1'] ],
+				[ 'id' => 2, 'type' => 'attribute-set', 'links' => ['self' => 'http://localhost/api/attribute-sets/2'] ],
+				[ 'id' => 3, 'type' => 'attribute-set', 'links' => ['self' => 'http://localhost/api/attribute-sets/3'] ]
 			]
 		]);
 
@@ -320,7 +320,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		
 		$this->assertEquals(200, $response->status());
 
-		$this->assertEquals( 4, count(json_decode($response->getContent())) );
+		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -329,7 +329,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 
 		$response = $this->call('GET', 'api/entity-types', ['sort' => '-code', 'limit' => 2]);
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 		$this->d->dump(json_decode($response->getContent()));
 		
 	}
@@ -340,7 +340,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 
 		$response = $this->call('GET', 'api/entity-types', ['limit' => 2, 'include' => 'attribute_sets.attributes']);
 
-		$this->assertEquals( 2, count(json_decode($response->getContent())) );
+		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
 		$this->d->dump(json_decode($response->getContent()));
 		
 	}
