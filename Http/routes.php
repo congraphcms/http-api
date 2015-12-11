@@ -171,4 +171,7 @@ $api->version('v1', function ($api) {
 	
 });
 
-
+Route::get(
+	'files/{url}', 
+	[ 'as' => 'CB::file::serve', 'uses' => 'Cookbook\Api\Http\Controllers\FileServeController@index' ]
+)->where('url', '(.*)');

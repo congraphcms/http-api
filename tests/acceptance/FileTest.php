@@ -5,6 +5,7 @@ use Cookbook\Core\Facades\Trunk;
 use Illuminate\Support\Debug\Dumper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
@@ -135,13 +136,15 @@ class FileTest extends Orchestra\Testbench\TestCase
 	protected function getPackageProviders($app)
 	{
 		return [
+			'Dingo\Api\Provider\LaravelServiceProvider',
+			'Intervention\Image\ImageServiceProvider',
 			'Cookbook\Core\CoreServiceProvider', 
 			'Cookbook\Locales\LocalesServiceProvider', 
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\Api\ApiServiceProvider',
-			'Dingo\Api\Provider\LaravelServiceProvider'
+			
 		];
 	}
 
@@ -337,5 +340,32 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$this->d->dump(json_decode($response->getContent()));
 
 		$this->assertEquals( 2, count(json_decode($response->getContent(), true)['data']) );
+	}
+
+	public function testFileServe()
+	{
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$response = $this->call('GET', 'files/files/test.jpg', []);
+
+		$content = $response->getContent();
+
+		$contentType = 'image/jpeg';
+		$fileContent = Storage::get('/files/test.jpg');
+		$this->assertEquals($fileContent, $content);
+		$this->assertEquals($contentType, $response->headers->get('Content-Type'));
+
+
+
+		$response = $this->call('GET', 'files/files/test.jpg', ['v' => 'admin_thumb']);
+
+		$content = $response->getContent();
+
+		$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/test.jpg';
+		$thumb = Image::make($thumbUrl);
+		$thumb->fit(200, 150);
+		$thumbContent = (string) $thumb->encode();
+		$this->assertEquals($thumbContent, $content);
+		$this->assertEquals($contentType, $response->headers->get('Content-Type'));
 	}
 }

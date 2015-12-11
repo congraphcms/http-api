@@ -150,7 +150,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		]);
 
-		$this->seeInDatabase('attribute_values_varchar', ['value' => 'some_unique_value']);
+		$this->seeInDatabase('attribute_values_text', ['value' => 'some_unique_value']);
 
 	}
 
@@ -205,7 +205,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		$this->seeJson([
 			'attribute1' => 'changed value'
 		]);
-		$this->seeInDatabase('attribute_values_varchar', ['value' => 'changed value']);
+		$this->seeInDatabase('attribute_values_text', ['value' => 'changed value']);
 		
 
 	}
@@ -239,7 +239,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		]);
 
-		$this->seeInDatabase('attribute_values_varchar', ['id' => 1, 'value' => 'value1']);
+		$this->seeInDatabase('attribute_values_text', ['id' => 1, 'value' => 'value1']);
 
 	}
 
