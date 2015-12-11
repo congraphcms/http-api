@@ -63,14 +63,7 @@ class FileServeController extends Controller
 	 */
 	protected function dispatchCommand($command, Closure $afterResolving = null)
 	{
-		try
-		{
-			return $this->bus->dispatch($command, $afterResolving);
-		}
-		catch (Exception $e)
-		{
-			$this->handleException($e);
-		}
+		return $this->bus->dispatch($command, $afterResolving);
 	}
 
 	public function index($fileUrl)
@@ -84,9 +77,9 @@ class FileServeController extends Controller
 		}
 		catch(Exception $e)
 		{
-			$this->handleException();
+			return $this->handleException($e);
 		}
-		
+
 		// $mime = Storage::getMimetype($command->url);
 
 		$mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $result);
@@ -129,7 +122,6 @@ class FileServeController extends Controller
 
 		$error = [
 			'status' 	=> $status,
-			'code'	 	=> $code,
 			'message' 	=> $message,
 		];
 
