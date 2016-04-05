@@ -34,7 +34,7 @@ use ReflectionClass;
  */
 class Linker
 {
-	public static function getLinks(DataTransferObject $result)
+	public static function getLinks(DataTransferObject $result, $endpoint)
 	{
 		$links = [];
 
@@ -42,7 +42,7 @@ class Linker
 		{
 			$url = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB::' . $result->getType() . '::fetch', ['id' => $result->id]);
+					->route('CB::' . $endpoint . '::fetch', ['id' => $result->id]);
 			$query = [];
 			if($result->getMeta('include'))
 			{
@@ -68,7 +68,7 @@ class Linker
 		{
 			$baseUrl = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB::' . $result->getType() . '::get');
+					->route('CB::' . $endpoint . '::get');
 			$query = [];
 			if($result->getMeta('filter'))
 			{

@@ -36,7 +36,7 @@ class FileController extends ApiController
 	{
 		$command = new FileGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'file');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -47,7 +47,7 @@ class FileController extends ApiController
 	{
 		$command = new FileFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'file');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -67,7 +67,7 @@ class FileController extends ApiController
 		}
 		$command = new FileCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'file');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 201);
@@ -88,7 +88,7 @@ class FileController extends ApiController
 		}
 		$command = new FileUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'file');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);

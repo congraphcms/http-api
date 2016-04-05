@@ -26,17 +26,14 @@ use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-
-// use Cookbook\Api\Dispatcher as ApiDispatcher;
-
 /**
- * BaseApiController class
+ * ApiController class
  * 
  * Controller for handling API requests 
  * 
  * @uses  		Illuminate\Routing\Controller
- * @uses  		Illuminate\Contracts\Bus\Dispatcher
- * @uses  		Illuminate\Contracts\Routing\ResponseFactory
+ * @uses  		Cookbook\Core\Bus\CommandDispatcher
+ * @uses  		Illuminate\Http\Request
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
@@ -46,7 +43,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ApiController extends Controller
 {
+	/**
+	 * Dingo API Controller helpers
+	 */
 	use Helpers;
+
 	/**
 	 * Command Bus Dispatcher
 	 * 
@@ -77,6 +78,13 @@ class ApiController extends Controller
 	public $nestedInclude;
 	
 
+
+	/**
+	 * Constructor
+	 * 
+	 * @param \Cookbook\Core\Bus\CommandDispatcher  $bus
+	 * @param \Illuminate\Http\Request  			$request
+	 */
 	public function __construct(CommandDispatcher $bus, Request $request)
 	{
 		$this->bus = $bus;
@@ -104,6 +112,15 @@ class ApiController extends Controller
 		}
 	}
 
+	/**
+	 * Handle Cookbook exceptions
+	 * and convert them to appropriate HTTP exceptions
+	 * for Dingo API
+	 * 
+	 * @param \Exception $e
+	 * 
+	 * @throws  $e
+	 */
 	protected function handleException(Exception $e)
 	{
 		// if it's a cookbook exception, 
@@ -113,10 +130,15 @@ class ApiController extends Controller
 			$this->handleCookbookException($e);
 		}
 
-		// if it's some other exception throw that exception
+		// if it's some other exception don't handle it
 		throw $e;
 	}
 
+	/**
+	 * Matches correct HTTP exception
+	 * 
+	 * @param \Cookbook\Core\Exceptions\Exception  $e
+	 */
 	protected function handleCookbookException(CookbookException $e)
 	{
 

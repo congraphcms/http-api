@@ -36,7 +36,7 @@ class EntityController extends ApiController
 	{
 		$command = new EntityGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'entity');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -47,7 +47,7 @@ class EntityController extends ApiController
 	{
 		$command = new EntityFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'entity');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -67,7 +67,7 @@ class EntityController extends ApiController
 		}
 		$command = new EntityCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'entity');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 201);
@@ -87,7 +87,7 @@ class EntityController extends ApiController
 		}
 		$command = new EntityUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'entity');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);

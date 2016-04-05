@@ -11,6 +11,8 @@
 namespace Cookbook\Api\Http\Middleware;
 
 use Closure;
+use Cookbook\Contracts\Eav\EntityTypeRepositoryContract;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * GetEntityType Middleware class
@@ -27,6 +29,25 @@ class GetEntityType
 {
 
 	/**
+	 * Repository for entity types
+	 * 
+	 * @var Cookbook\Contracts\Eav\EntityTypeRepositoryContract
+	 */
+	protected $entityTypeRepository;
+
+	/**
+	 * Create new GetEntityType
+	 * 
+	 * @param \Cookbook\Contracts\Eav\EntityTypeRepositoryContract $repository
+	 * 
+	 * @return void
+	 */
+	public function __construct(EntityTypeRepositoryContract $entityTypeRepository)
+	{
+		$this->entityTypeRepository = $entityTypeRepository;
+	}
+
+	/**
 	 * Check if entity type in route exist and add it to Request
 	 *
 	 * @param \Illuminate\Http\Request $request
@@ -37,11 +58,17 @@ class GetEntityType
 	public function handle($request, Closure $next)
 	{
 		$type = $request->route('type');
-		if( ! empty($type) )
+		$entityTypes = $this->entityTypeRepository->get(['endpoint' => $type]);
+		if( ! empty($entityTypes) )
 		{
-			$request->merge(['type' => $type]);
+			$entityType = $entityTypes[0];
+			$filter = $request->input('filter', []);
+			$filter = array_merge_recursive($filter, ['entity_type' => $entityType->code]);
+			$request->merge(['filter' => $filter]);
+
+			return $next($request);
 		}
 		
-		return $next($request);
+		throw new NotFoundHttpException();
 	}
 }

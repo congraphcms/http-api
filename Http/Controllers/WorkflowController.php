@@ -36,7 +36,7 @@ class WorkflowController extends ApiController
 	{
 		$command = new WorkflowGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'workflow');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -47,7 +47,7 @@ class WorkflowController extends ApiController
 	{
 		$command = new WorkflowFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'workflow');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);
@@ -67,7 +67,7 @@ class WorkflowController extends ApiController
 		}
 		$command = new WorkflowCreateCommand($params);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'workflow');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 201);
@@ -87,7 +87,7 @@ class WorkflowController extends ApiController
 		}
 		$command = new WorkflowUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
-		$links = Linker::getLinks($result);
+		$links = Linker::getLinks($result, 'workflow');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
 		$parsedResult['links'] = $links;
 		$response = new Response($parsedResult, 200);

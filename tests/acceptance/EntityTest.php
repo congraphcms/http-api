@@ -360,7 +360,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($response->getContent()));
 		
-		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
+		$this->assertEquals( 3, count(json_decode($response->getContent(), true)['data']) );
 		$this->assertEquals( 1, json_decode($response->getContent(), true)['data'][0]['entity_type_id'] );
 
 	}

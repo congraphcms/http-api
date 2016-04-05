@@ -107,7 +107,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 			'locale' => 'en_US'
 		];
 		$model->setMeta($meta);
-		$links = Linker::getLinks($model);
+		$links = Linker::getLinks($model, 'attribute');
 		$this->d->dump($links);
 
 		$data = new StdClass();
@@ -128,7 +128,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		];
 
 		$collection->setMeta($meta);
-		$links = Linker::getLinks($collection);
+		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 
@@ -141,7 +141,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		];
 		
 		$collection->setMeta($meta);
-		$links = Linker::getLinks($collection);
+		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
@@ -153,7 +153,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		];
 		
 		$collection->setMeta($meta);
-		$links = Linker::getLinks($collection);
+		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
@@ -165,7 +165,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		];
 		
 		$collection->setMeta($meta);
-		$links = Linker::getLinks($collection);
+		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
@@ -177,7 +177,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		];
 		
 		$collection->setMeta($meta);
-		$links = Linker::getLinks($collection);
+		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 	}
 
