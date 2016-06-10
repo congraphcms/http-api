@@ -138,6 +138,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'code' => 'test-attr-set',
 			'name' => 'Test Attr Set',
 			'entity_type_id' => 1,
+			'primary_attribute_id' => 1,
 			'attributes' => [
 				['id' => 1],
 				['id' => 2]
@@ -172,6 +173,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'code' => '',
 			'name' => 'Test Attr Set',
 			'entity_type_id' => 1,
+			'primary_attribute_id' => 1,
 			'attributes' => [
 				['id' => 1],
 				['id' => 2]
