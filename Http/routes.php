@@ -83,7 +83,9 @@ $api->version('v1', function ($api) {
 			// Get
 			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@show' ] )->where('id', '[0-9]+');
+			// Serve
+			$api->get( '/{file}', [ 'as' => 'serve', 'uses' => 'Cookbook\Api\Http\Controllers\FileServeController@index' ] );
 
 		});
 
@@ -164,6 +166,7 @@ $api->version('v1', function ($api) {
 			$api->get( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
 			// Fetch
 			$api->get( '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@show' ] );
+			
 
 		});
 	});
@@ -171,7 +174,7 @@ $api->version('v1', function ($api) {
 	
 });
 
-Route::get(
-	'files/{url}', 
-	[ 'as' => 'CB::file::serve', 'uses' => 'Cookbook\Api\Http\Controllers\FileServeController@index' ]
-)->where('url', '(.*)');
+// Route::get(
+// 	'test/files/{url}', 
+// 	[ 'as' => 'CB::file::serve', 'uses' => 'Cookbook\Api\Http\Controllers\FileServeController@index' ]
+// )->where('url', '(.*)');

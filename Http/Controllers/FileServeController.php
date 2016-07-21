@@ -68,7 +68,9 @@ class FileServeController extends Controller
 
 	public function index($fileUrl)
 	{
+		$fileUrl = 'files/' . $fileUrl;
 		$version = ($this->request->input('v'))?$this->request->input('v'):null;
+		
 		$command = new FileServeCommand($fileUrl, $version);
 
 		try
@@ -86,7 +88,7 @@ class FileServeController extends Controller
         // return http response
         $response = new Response($result, 200, array(
             'Content-Type' => $mime,
-            'Cache-Control' => 'max-age='.(Config::get('cb.files.cache_lifetime')*60).', public',
+            // 'Cache-Control' => 'max-age='.(Config::get('cb.files.cache_lifetime')*60).', public',
             'Etag' => md5($result)
         ));
 
