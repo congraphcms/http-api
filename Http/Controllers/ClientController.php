@@ -11,18 +11,18 @@
 namespace Cookbook\Api\Http\Controllers;
 
 use Cookbook\Api\Linker;
-use Cookbook\Users\Commands\Users\UserCreateCommand;
-use Cookbook\Users\Commands\Users\UserDeleteCommand;
-use Cookbook\Users\Commands\Users\UserFetchCommand;
-use Cookbook\Users\Commands\Users\UserGetCommand;
-use Cookbook\Users\Commands\Users\UserUpdateCommand;
+use Cookbook\OAuth2\Commands\Clients\ClientCreateCommand;
+use Cookbook\OAuth2\Commands\Clients\ClientDeleteCommand;
+use Cookbook\OAuth2\Commands\Clients\ClientFetchCommand;
+use Cookbook\OAuth2\Commands\Clients\ClientGetCommand;
+use Cookbook\OAuth2\Commands\Clients\ClientUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
 /**
- * UserController class
+ * ClientController class
  *
- * RESTful Controller for user resource
+ * RESTful Controller for client resource
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
@@ -30,11 +30,11 @@ use Dingo\Api\Http\Response;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class UserController extends ApiController
+class ClientController extends ApiController
 {
 	public function index()
 	{
-		$command = new UserGetCommand($this->request->all());
+		$command = new ClientGetCommand($this->request->all());
 		$result = $this->dispatchCommand($command);
 		$links = Linker::getLinks($result, 'user');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
@@ -45,7 +45,7 @@ class UserController extends ApiController
 
 	public function show($id)
 	{
-		$command = new UserFetchCommand($this->request->all(), $id);
+		$command = new ClientFetchCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
 		$links = Linker::getLinks($result, 'user');
 		$parsedResult = $result->toArray($this->includeMeta, $this->nestedInclude, [Linker::class, 'addLinks']);
@@ -65,7 +65,7 @@ class UserController extends ApiController
 		{
 			$params = $this->request->all();
 		}
-		$command = new UserCreateCommand($params);
+		$command = new ClientCreateCommand($params);
 		$result = $this->dispatchCommand($command);
 		$links = Linker::getLinks($result, 'user');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
@@ -85,7 +85,7 @@ class UserController extends ApiController
 		{
 			$params = $this->request->all();
 		}
-		$command = new UserUpdateCommand($params, $id);
+		$command = new ClientUpdateCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		$links = Linker::getLinks($result, 'user');
 		$parsedResult = $result->toArray($this->includeMeta, false, [Linker::class, 'addLinks']);
@@ -96,7 +96,7 @@ class UserController extends ApiController
 
 	public function destroy($id)
 	{
-		$command = new UserDeleteCommand($this->request->all(), $id);
+		$command = new ClientDeleteCommand($this->request->all(), $id);
 		$result = $this->dispatchCommand($command);
 		return $this->response->noContent();
 	}

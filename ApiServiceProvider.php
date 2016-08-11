@@ -10,6 +10,8 @@
 
 namespace Cookbook\Api;
 
+use Dingo\Api\Auth\Auth;
+use Dingo\Api\Auth\Provider\OAuth2;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -57,6 +59,8 @@ class ApiServiceProvider extends ServiceProvider {
 		]);
 		include __DIR__ . '/Http/routes.php';
 
+		$this->extendDingoAuth();
+
 		// $this->mapApiCommands();
 	}
 
@@ -75,6 +79,32 @@ class ApiServiceProvider extends ServiceProvider {
 		// // Handlers
 		// // -----------------------------------------------------------------------------
 		// $this->app->register('Cookbook\Api\Handlers\HandlersServiceProvider');
+	}
+
+	/**
+	 * Extend Dingo API Auth Class
+	 *
+	 * @return void
+	 */
+	public function extendDingoAuth() {
+		// $app = $this->app;
+		$this->app[Auth::class]->extend('oauth', function ($app) {
+            $provider = new OAuth2($app['oauth2-server.authorizer']->getChecker());
+
+            $provider->setUserResolver(function ($id) use ($app){
+                $userRepository = $app->make('Cookbook\Contracts\Users\UserRepositoryContract');
+                $user = $userRepository->fetch($id);
+                return $client;
+            });
+
+            $provider->setClientResolver(function ($id) use ($app) {
+                $clientRepository = $app->make('Cookbook\Contracts\OAuth2\ClientRepositoryContract');
+                $client = $clientRepository->fetch($id);
+                return $client;
+            });
+
+            return $provider;
+        });
 	}
 
 	/**

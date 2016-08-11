@@ -11,6 +11,8 @@ require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/UserDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
 class FileTest extends Orchestra\Testbench\TestCase
@@ -44,6 +46,16 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
 		]);
 
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/users/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/lucadegasperi/oauth2-server-laravel/database/migrations'),
+		]);
+
 		$this->artisan('db:seed', [
 			'--class' => 'EavDbSeeder'
 		]);
@@ -60,7 +72,18 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'--class' => 'FileDbSeeder'
 		]);
 
+		$this->artisan('db:seed', [
+			'--class' => 'ClientDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'UserDbSeeder'
+		]);
 		$this->d = new Dumper();
+
+		$this->server = [
+			'HTTP_Authorization' => 'Bearer e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz'
+		];
 
 		Storage::deleteDir('files');
 		Storage::deleteDir('uploads');
@@ -143,9 +166,28 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\OAuth2\OAuth2ServiceProvider', 
+			'Cookbook\Users\UsersServiceProvider', 
+			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
+			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Cookbook\Api\ApiServiceProvider',
 			
 		];
+	}
+
+	public function testNotAuthorized() {
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$this->get('api/files/1');
+
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(401);
+
+		$this->seeJson([
+			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
+  			"status_code" => 401
+		]);
 	}
 
 	public function testCreateFile()
@@ -159,7 +201,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$file = new UploadedFile(realpath(__DIR__ . '/../storage/uploads/1.jpg'), '1.jpg', 'image/jpeg', Storage::getSize('uploads/1.jpg'), null, true);
 
-		$response = $this->call('POST', 'api/files', $params, [], ['file' => $file]);
+		$response = $this->call('POST', 'api/files', $params, [], ['file' => $file], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -187,7 +229,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'description' => 'File description'
 		];
 
-		$response = $this->call('POST', 'api/files', $params);
+		$response = $this->call('POST', 'api/files', $params, [], [], $this->server);
 
 		$this->assertEquals(422, $response->status());
 
@@ -212,7 +254,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'description' => 'File description changed'
 		];
 
-		$response = $this->call('PATCH', 'api/files/1', $params);
+		$response = $this->call('PATCH', 'api/files/1', $params, [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -227,39 +269,11 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	}
 
-	// public function testUpdateFails()
-	// {
-	// 	fwrite(STDOUT, __METHOD__ . "\n");
-
-	// 	$params = [
-	// 		'code' => ''
-	// 	];
-
-	// 	$response = $this->call('PUT', 'api/files/1', $params);
-
-	// 	$this->d->dump(json_decode($response->getContent()));
-
-	// 	$this->assertEquals(422, $response->status());
-
-	// 	$this->seeJson([
-	// 		'status_code' => 422,
-	// 		'message' => '422 Unprocessable Entity',
-	// 		'errors' => [
-	// 			'attributes' => [
-	// 				'code' => ['The code field is required.']
-	// 			]
-	// 		]
-	// 	]);
-
-	// 	$this->seeInDatabase('attributes', ['id' => 1, 'code' => 'attribute1']);
-
-	// }
-
 	public function testDeleteFile()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/files/1', []);
+		$response = $this->call('DELETE', 'api/files/1', [], [], [], $this->server);
 
 		$this->assertEquals(204, $response->status());
 
@@ -272,7 +286,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/files/1233', []);
+		$response = $this->call('DELETE', 'api/files/1233', [], [], [], $this->server);
 
 		$this->assertEquals(404, $response->status());
 
@@ -288,7 +302,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/files/1', []);
+		$response = $this->call('GET', 'api/files/1', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -305,7 +319,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/files/112233', []);
+		$response = $this->call('GET', 'api/files/112233', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -322,7 +336,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");	
 
-		$response = $this->call('GET', 'api/files', []);
+		$response = $this->call('GET', 'api/files', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -335,7 +349,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/files', ['sort' => '-name']);
+		$response = $this->call('GET', 'api/files', ['sort' => '-name'], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -345,8 +359,8 @@ class FileTest extends Orchestra\Testbench\TestCase
 	public function testFileServe()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$response = $this->call('GET', 'files/files/test.jpg', []);
+		$this->refreshApplication();
+		$response = $this->call('GET', 'api/files/test.jpg', [], [], [], $this->server);
 
 		$content = $response->getContent();
 
@@ -356,16 +370,18 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$this->assertEquals($contentType, $response->headers->get('Content-Type'));
 
 
+		$this->refreshApplication();
+		$this->get('api/files/test.jpg?v=admin_thumb', $this->server);
 
-		$response = $this->call('GET', 'files/files/test.jpg', ['v' => 'admin_thumb']);
+		$content = $this->response->getContent();
 
-		$content = $response->getContent();
+		// $this->d->dump($response->getContent());
 
 		$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/test.jpg';
-		$thumb = Image::make($thumbUrl);
-		$thumb->fit(200, 150);
-		$thumbContent = (string) $thumb->encode();
+
+		$thumbHandler = new \Cookbook\Filesystem\Handlers\Images\AdminThumbHandler();
+		$thumbContent = $thumbHandler->handle($thumbUrl);
 		$this->assertEquals($thumbContent, $content);
-		$this->assertEquals($contentType, $response->headers->get('Content-Type'));
+		$this->assertEquals($contentType, $this->response->headers->get('Content-Type'));
 	}
 }

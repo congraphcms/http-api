@@ -1,10 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Debug\Dumper;
 use Cookbook\Core\Facades\Trunk;
+use Illuminate\Support\Debug\Dumper;
 
-// include_once(realpath(__DIR__.'/../LaravelMocks.php'));
 require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
@@ -13,7 +12,7 @@ require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/UserDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
-class AttributeSetTest extends Orchestra\Testbench\TestCase
+class ClientTest extends Orchestra\Testbench\TestCase
 {
 
 	public function setUp()
@@ -79,25 +78,19 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'HTTP_Authorization' => 'Bearer e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz'
 		];
 
-		$this->createApplication();
-		// $this->app = $this->createApplication();
-
-		// $this->bus = $this->app->make('Illuminate\Contracts\Bus\Dispatcher');
-
 	}
 
 	public function tearDown()
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
-		// Trunk::forgetAll();
-
+		Trunk::forgetAll();
 		// $this->artisan('db:seed', [
 		// 	'--class' => 'ClearDB'
 		// ]);
 
 		DB::disconnect();
-
+		
 		parent::tearDown();
 	}
 
@@ -154,13 +147,12 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'Cookbook\Api\ApiServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider'
 		];
-		
 	}
 
 	public function testNotAuthorized() {
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/attribute-sets/1');
+		$this->get('api/clients/1');
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
@@ -172,138 +164,74 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		]);
 	}
 
-	public function testCreateAttributeSet()
+	public function testCreateClient()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => 'test-attr-set',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'primary_attribute_id' => 1,
-			'attributes' => [
-				['id' => 1],
-				['id' => 2]
-			]
+			'name' => 'Jane\'s Mobile App'
 		];
 
-		$this->post('api/attribute-sets', $params, $this->server);
+		$this->refreshApplication();
+
+		$this->post('api/clients', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 		
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
-			'code' => 'test-attr-set',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'attributes' => [
-				['id' => 1, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/1']],
-				['id' => 2, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/2']]
-			]
+			'name' => 'Jane\'s Mobile App'
 		]);
 
-		$this->seeInDatabase('attribute_sets', ['code' => 'test-attr-set']);
+		$id = json_decode($this->response->getContent(), true)['data']['id'];
+		$secret = json_decode($this->response->getContent(), true)['data']['secret'];
+
+		$this->seeInDatabase('oauth_clients', ['id' => $id, 'secret' => $secret, 'name' => 'Jane\'s Mobile App']);
 
 	}
 
-	public function testCreateFails()
+	public function testUpdateClient()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'code' => '',
-			'name' => 'Test Attr Set',
-			'entity_type_id' => 1,
-			'primary_attribute_id' => 1,
-			'attributes' => [
-				['id' => 1],
-				['id' => 2]
-			]
+			'name' => 'Jane\'s Web App'
 		];
 
-		$this->post('api/attribute-sets', $params, $this->server);
-
-		$this->d->dump(json_decode($this->response->getContent()));
-		
-		$this->seeStatusCode(422);
-
-		$this->seeJson([
-			'status_code' => 422,
-			'message' => '422 Unprocessable Entity',
-			'errors' => [
-				'attribute-set' => [
-					'code' => ['The code field is required.']
-				]
-			]
-		]);
-	}
-
-	public function testUpdateAttributeSet()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$params = [
-			'code' => 'set_code2'
-		];
-
-		$this->patch('api/attribute-sets/1', $params, $this->server);
+		$this->patch('api/clients/iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
 		$this->seeStatusCode(200);
 
 		$this->seeJson([
-			'code' => 'set_code2'
+			'name' => 'Jane\'s Web App'
 		]);
 
-		$this->seeInDatabase('attribute_sets', ['id' => 1, 'code' => 'set_code2']);
+		$this->seeInDatabase('oauth_clients', ['id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR', 'name' => 'Jane\'s Web App']);
 		
 
 	}
 
-	public function testUpdateFails()
+	public function testDeleteClient()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$params = [
-			'code' => ''
-		];
-
-		$this->put('api/attribute-sets/1', $params, $this->server);
+		$this->delete('api/clients/iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR', [], $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(422);
-
-		$this->seeJson([
-			'status_code' => 422,
-			'message' => '422 Unprocessable Entity',
-			'errors' => [
-				'attribute-set' => [
-					'code' => ['The code field is required.']
-				]
-			]
-		]);
-
-		$this->seeInDatabase('attribute_sets', ['id' => 1, 'code' => 'attribute_set1']);
-
-	}
-
-	public function testDeleteAttributeSet()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$this->delete('api/attribute-sets/1', [], $this->server);
-
 		$this->seeStatusCode(204);
+
+		$this->dontSeeInDatabase('oauth_clients', ['id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR']);
 	}
 
 	public function testDeleteFails()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->delete('api/attribute-sets/12233', [], $this->server);
+		$this->delete('api/clients/123', [], $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
@@ -313,25 +241,25 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'status_code' => 404,
 			'message' => '404 Not Found'
 		]);
+
+		$this->seeInDatabase('oauth_clients', ['id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR']);
 	}
 	
-	public function testFetchAttributeSet()
+	public function testFetchClient()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/attribute-sets/1', $this->server);
+		$this->get('api/clients/iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
 		$this->seeStatusCode(200);
 
 		$this->seeJson([
-			'code' => 'attribute_set1',
-			'attributes' => [
-				[ 'id' => 2, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/2'] ],
-				[ 'id' => 1, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/1'] ],
-				[ 'id' => 3, 'type' => 'attribute', 'links' => ['self' => 'http://localhost/api/attributes/3'] ]
-			]
+			"id"=> 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+			"secret"=> "3wMlLnCBONHSlrxUJESPm1VwF9kBnHEGcCFt8iVR",
+		    "name"=> "Test Client",
+		    "type"=> "client"
 		]);
 	}
 
@@ -339,7 +267,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/attribute-sets/12233', $this->server);
+		$this->get('api/clients/112233', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
@@ -352,45 +280,29 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 	}
 	
 	
-	public function testGetAttributeSets()
+	public function testGetClients()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/attribute-sets', $this->server);
+		$this->get('api/clients', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
 		$this->seeStatusCode(200);
 
-		$this->assertEquals( 4, count(json_decode($this->response->getContent(), true)['data']) );
+		$this->assertEquals( 1, count(json_decode($this->response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/attribute-sets?sort=-code&limit=2', $this->server);
+		$this->get('api/clients?sort=-name&limit=3', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
 		$this->seeStatusCode(200);
 
-		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
-	}
-
-	public function testGetWithInclude()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$this->get('api/attribute-sets?sort=-code&limit=2&include=entity_type,attributes', $this->server);
-
-		$this->d->dump(json_decode($this->response->getContent()));
-
-		$this->seeStatusCode(200);
-
-		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
-		$this->assertEquals( 'test_fields', json_decode($this->response->getContent(), true)['data'][0]['entity_type']['code'] );
-		
-		
+		$this->assertEquals( 1, count(json_decode($this->response->getContent(), true)['data']) );
 	}
 }

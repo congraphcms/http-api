@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB::'], function($api){
+	$api->group(['as' => 'CB::', 'middleware' => 'api.auth', 'providers' => ['oauth']], function($api){
 
 		// Attributes
 		$api->group(['prefix' => 'attributes', 'as' => 'attribute::'], function($api){
@@ -153,6 +153,22 @@ $api->version('v1', function ($api) {
 
 		});
 
+		// Clients
+		$api->group(['prefix' => 'clients', 'as' => 'client::'], function($api){
+
+			// Create
+			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@store' ] );
+			// Update
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@update' ] );
+			// Delete
+			$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@destroy' ] );
+			// Get
+			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@index' ] );
+			// Fetch
+			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@show' ] );
+
+		});
+
 		// Entities (with type prefix)
 		$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
 
@@ -166,7 +182,6 @@ $api->version('v1', function ($api) {
 			$api->get( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
 			// Fetch
 			$api->get( '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@show' ] );
-			
 
 		});
 	});

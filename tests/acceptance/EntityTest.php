@@ -8,6 +8,8 @@ require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/UserDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
 class EntityTest extends Orchestra\Testbench\TestCase
@@ -41,6 +43,16 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
 		]);
 
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/users/database/migrations'),
+		]);
+
+		$this->artisan('migrate', [
+			'--database' => 'testbench',
+			'--realpath' => realpath(__DIR__.'/../../vendor/lucadegasperi/oauth2-server-laravel/database/migrations'),
+		]);
+
 		$this->artisan('db:seed', [
 			'--class' => 'EavDbSeeder'
 		]);
@@ -53,7 +65,18 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'--class' => 'WorkflowDbSeeder'
 		]);
 
+		$this->artisan('db:seed', [
+			'--class' => 'ClientDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'UserDbSeeder'
+		]);
 		$this->d = new Dumper();
+
+		$this->server = [
+			'HTTP_Authorization' => 'Bearer e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz'
+		];
 
 	}
 
@@ -117,9 +140,28 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\OAuth2\OAuth2ServiceProvider', 
+			'Cookbook\Users\UsersServiceProvider', 
+			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
+			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Cookbook\Api\ApiServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider'
 		];
+	}
+
+	public function testNotAuthorized() {
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$this->get('api/entities/1');
+
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(401);
+
+		$this->seeJson([
+			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
+  			"status_code" => 401
+		]);
 	}
 
 	public function testCreateEntity()
@@ -135,7 +177,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		];
 
-		$response = $this->call('POST', 'api/entities', $params);
+		$response = $this->call('POST', 'api/entities', $params, [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -166,7 +208,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		];
 
-		$response = $this->call('POST', 'api/entities', $params);
+		$response = $this->call('POST', 'api/entities', $params, [], [], $this->server);
 
 		$this->assertEquals(422, $response->status());
 
@@ -196,7 +238,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		];
 
-		$response = $this->call('PATCH', 'api/entities/1', $params);
+		$response = $this->call('PATCH', 'api/entities/1', $params, [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -221,7 +263,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 			]
 		];
 
-		$response = $this->call('PUT', 'api/entities/1', $params);
+		$response = $this->call('PUT', 'api/entities/1', $params, [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -247,7 +289,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/entities/1', []);
+		$response = $this->call('DELETE', 'api/entities/1', [], [], [], $this->server);
 
 		$this->assertEquals(204, $response->status());
 
@@ -257,7 +299,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/entities/1233', []);
+		$response = $this->call('DELETE', 'api/entities/1233', [], [], [], $this->server);
 
 		$this->assertEquals(404, $response->status());
 
@@ -273,7 +315,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities/1', []);
+		$response = $this->call('GET', 'api/entities/1', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -300,7 +342,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities/112233', []);
+		$response = $this->call('GET', 'api/entities/112233', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -317,7 +359,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");	
 
-		$response = $this->call('GET', 'api/entities', []);
+		$response = $this->call('GET', 'api/entities', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -330,7 +372,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities', ['sort' => ['fields.attribute3'], 'limit' => 3, 'offset' => 0]);
+		$response = $this->call('GET', 'api/entities', ['sort' => ['fields.attribute3'], 'limit' => 3, 'offset' => 0], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 
@@ -343,7 +385,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 
 		$filter = [ 'fields.attribute1' => ['in' => ['value12']] ];
 
-		$response = $this->call('GET', 'api/entities', ['filter' => $filter]);
+		$response = $this->call('GET', 'api/entities', ['filter' => $filter], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		
@@ -356,7 +398,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/tests', []);
+		$response = $this->call('GET', 'api/tests', [], [], [], $this->server);
 
 		$this->d->dump(json_decode($response->getContent()));
 		

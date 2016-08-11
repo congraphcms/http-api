@@ -71,6 +71,10 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
+			'Cookbook\OAuth2\OAuth2ServiceProvider', 
+			'Cookbook\Users\UsersServiceProvider', 
+			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
+			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Cookbook\Api\ApiServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider'
 		];

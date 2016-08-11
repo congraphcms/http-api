@@ -11,11 +11,11 @@
     ],
 
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.9",
         "cookbook/contracts": "dev-master",
         "cookbook/core": "dev-master",
         "cookbook/eav": "dev-master",
-        "cookbook/oauth": "dev-master",
+        "cookbook/oauth-2": "dev-master",
         "dingo/api": "1.0.*@dev"
     },
 
@@ -46,7 +46,11 @@
         },
         {
             "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/oauth.git"
+            "url":  "git@bitbucket.org:cookbookcms/oauth-2.git"
+        },
+        {
+            "type": "git",
+            "url":  "git@bitbucket.org:cookbookcms/users.git"
         }
     ],
 
