@@ -94,7 +94,7 @@ class ApiServiceProvider extends ServiceProvider {
             $provider->setUserResolver(function ($id) use ($app){
                 $userRepository = $app->make('Cookbook\Contracts\Users\UserRepositoryContract');
                 $user = $userRepository->fetch($id);
-                return $client;
+                return $user;
             });
 
             $provider->setClientResolver(function ($id) use ($app) {

@@ -16,6 +16,7 @@ use Cookbook\Users\Commands\Users\UserDeleteCommand;
 use Cookbook\Users\Commands\Users\UserFetchCommand;
 use Cookbook\Users\Commands\Users\UserGetCommand;
 use Cookbook\Users\Commands\Users\UserUpdateCommand;
+use Cookbook\Users\Commands\Users\UserChangePasswordCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -97,6 +98,22 @@ class UserController extends ApiController
 	public function destroy($id)
 	{
 		$command = new UserDeleteCommand($this->request->all(), $id);
+		$result = $this->dispatchCommand($command);
+		return $this->response->noContent();
+	}
+
+	public function password($id)
+	{
+		$params = [];
+		if($this->request->input('data'))
+		{
+			$params = $this->request->input('data');
+		}
+		else
+		{
+			$params = $this->request->all();
+		}
+		$command = new UserChangePasswordCommand($params, $id);
 		$result = $this->dispatchCommand($command);
 		return $this->response->noContent();
 	}

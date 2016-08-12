@@ -243,6 +243,25 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	}
 
+	public function testChangeUserPassword()
+	{
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$params = [
+			'password' => 'newpassword123'
+		];
+
+		$this->post('api/users/1/change-password', $params, $this->server);
+
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(204);
+
+		$this->seeInDatabase('users', ['id' => 1, 'name' => 'Jane Doe']);
+		
+
+	}
+
 	public function testDeleteUser()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");

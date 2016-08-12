@@ -150,6 +150,8 @@ $api->version('v1', function ($api) {
 			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@index' ] );
 			// Fetch
 			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@show' ] );
+			// Change password
+			$api->post( '/{id}/change-password', [ 'as' => 'changePassword', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@password' ] );
 
 		});
 
