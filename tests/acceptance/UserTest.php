@@ -8,8 +8,10 @@ require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
-require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/UserDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ScopeDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/RoleDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
 class UserTest extends Orchestra\Testbench\TestCase
@@ -66,12 +68,21 @@ class UserTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'ClientDbSeeder'
+			'--class' => 'UserDbSeeder'
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'UserDbSeeder'
+			'--class' => 'ScopeDbSeeder'
 		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'RoleDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'ClientDbSeeder'
+		]);
+
 		$this->d = new Dumper();
 
 		$this->server = [
@@ -135,17 +146,16 @@ class UserTest extends Orchestra\Testbench\TestCase
 	protected function getPackageProviders($app)
 	{
 		return [
+			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
+			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
+			'Dingo\Api\Provider\LaravelServiceProvider',
 			'Cookbook\Core\CoreServiceProvider', 
 			'Cookbook\Locales\LocalesServiceProvider', 
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider', 
-			'Cookbook\Users\UsersServiceProvider', 
-			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
-			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
-			'Cookbook\Api\ApiServiceProvider',
-			'Dingo\Api\Provider\LaravelServiceProvider'
+			'Cookbook\OAuth2\OAuth2ServiceProvider',
+			'Cookbook\Api\ApiServiceProvider'
 		];
 	}
 
@@ -171,7 +181,13 @@ class UserTest extends Orchestra\Testbench\TestCase
 		$params = [
 			'name' => 'John Doe',
 			'email' => 'john.doe@email.com',
-			'password' => 'secret123'
+			'password' => 'secret123',
+			'roles' => [
+				[
+					'id' => 1,
+					'type' => 'role'
+				]	
+			]
 		];
 
 		$this->refreshApplication();
@@ -189,7 +205,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 		$this->assertFalse(isset(json_decode($this->response->getContent(), true)['data']['password']));
 
-		$this->seeInDatabase('users', ['id' => 2, 'name' => 'John Doe', 'email' => 'john.doe@email.com']);
+		$this->seeInDatabase('users', ['name' => 'John Doe', 'email' => 'john.doe@email.com']);
 
 	}
 
@@ -200,7 +216,13 @@ class UserTest extends Orchestra\Testbench\TestCase
 		$params = [
 			'name' => 'John Doe',
 			'email' => 'john.doe',
-			'password' => 'secret123'
+			'password' => 'secret123',
+			'roles' => [
+				[
+					'id' => 1,
+					'type' => 'role'
+				]	
+			]
 		];
 
 		$this->post('api/users', $params, $this->server);
@@ -338,7 +360,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 		$this->seeStatusCode(200);
 
-		$this->assertEquals( 1, count(json_decode($this->response->getContent(), true)['data']) );
+		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
 	}
 
 	public function testGetParams()
@@ -351,6 +373,6 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 		$this->seeStatusCode(200);
 
-		$this->assertEquals( 1, count(json_decode($this->response->getContent(), true)['data']) );
+		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
 	}
 }

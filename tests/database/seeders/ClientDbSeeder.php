@@ -40,6 +40,64 @@ class ClientDbSeeder extends Seeder {
 			]
 		]);
 
+		DB::table('oauth_grants')->delete();
+		DB::table('oauth_grants')->insert([
+			[
+				'id' => 'password',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'id' => 'client_credentials',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			]
+		]);
+
+		DB::table('oauth_client_scopes')->truncate();
+		DB::table('oauth_client_scopes')->insert([
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'scope_id' => 'manage_content_model',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'scope_id' => 'manage_entities',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'scope_id' => 'manage_users',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'scope_id' => 'manage_clients',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			]
+		]);
+
+		DB::table('oauth_client_grants')->truncate();
+		DB::table('oauth_client_grants')->insert([
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'grant_id' => 'password',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
+				'grant_id' => 'client_credentials',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			]
+		]);
+
 		DB::table('oauth_sessions')->delete();
 		$session_id = DB::table('oauth_sessions')->insertGetId(
 			[
@@ -57,6 +115,34 @@ class ClientDbSeeder extends Seeder {
 				'id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
 				'session_id' => $session_id,
 				'expire_time' => 147092935900,
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			]
+		]);
+
+		DB::table('oauth_access_token_scopes')->truncate();
+		DB::table('oauth_access_token_scopes')->insert([
+			[
+				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
+				'scope_id' => 'manage_content_model',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
+				'scope_id' => 'manage_clients',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
+				'scope_id' => 'manage_users',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
+				'scope_id' => 'manage_entities',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			]

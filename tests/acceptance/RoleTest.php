@@ -14,7 +14,7 @@ require_once(__DIR__ . '/../database/seeders/RoleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
-class EntityTest extends Orchestra\Testbench\TestCase
+class RoleTest extends Orchestra\Testbench\TestCase
 {
 
 	public function setUp()
@@ -82,7 +82,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		$this->artisan('db:seed', [
 			'--class' => 'ClientDbSeeder'
 		]);
-		
+
 		$this->d = new Dumper();
 
 		$this->server = [
@@ -162,7 +162,7 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	public function testNotAuthorized() {
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$this->get('api/entities/1');
+		$this->get('api/roles/1');
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
@@ -174,35 +174,33 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		]);
 	}
 
-	public function testCreateEntity()
+	public function testCreateRole()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'entity_type' => 'tests',
-			'attribute_set' => ['id' => 1],
-			'fields' => [
-				'attribute1' => 'some_unique_value',
-				'attribute2' => ''
-			]
+			'name' => 'Project Manager',
+			'description' => 'Edits entities of only one project.',
+			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_entities']
 		];
 
-		$response = $this->call('POST', 'api/entities', $params, [], [], $this->server);
+		$this->refreshApplication();
 
-		$this->d->dump(json_decode($response->getContent()));
+		$this->post('api/roles', $params, $this->server);
+
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$result = json_decode($this->response->getContent(), true)['data'];
 		
-
-		$this->assertEquals(201, $response->status());
+		$this->seeStatusCode(201);
 
 		$this->seeJson([
-			'fields' => [
-				'attribute1' => 'some_unique_value',
-				'attribute2' => '',
-				'attribute3' => ["en_US" => "", "fr_FR" => ""]
-			]
+			'name' => 'Project Manager',
+			'description' => 'Edits entities of only one project.',
+			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_entities']
 		]);
 
-		$this->seeInDatabase('attribute_values_text', ['value' => 'some_unique_value']);
+		$this->seeInDatabase('roles', ['id' => $result['id'], 'name' => $result['name'], 'description' => $result['description']]);
 
 	}
 
@@ -211,140 +209,99 @@ class EntityTest extends Orchestra\Testbench\TestCase
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'entity_type' => 'tests',
-			'attribute_set' => ['id' => 1],
-			'fields' => [
-				'attribute1' => ''
-			]
+			'name' => 'Project Manager',
+			'description' => 'Edits entities of only one project.',
 		];
 
-		$response = $this->call('POST', 'api/entities', $params, [], [], $this->server);
+		$this->post('api/roles', $params, $this->server);
 
-		$this->assertEquals(422, $response->status());
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(422);
 
 		$this->seeJson([
 			'status_code' => 422,
 			'message' => '422 Unprocessable Entity',
 			'errors' => [
-				'entity' => [
-					'fields' => [
-						'attribute1' => [ 'This field is required.' ]
-					]
+				'role' => [
+					'scopes' => ['The scopes field is required.']
 				]
 			]
 		]);
-
-		$this->d->dump(json_decode($response->getContent()));
-
 	}
 
-	public function testUpdateEntity()
+	public function testUpdateRole()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
-			'fields' => [
-				'attribute1' => 'changed value'
-			]
+			'name' => 'Content Editor',
+			'scopes' => ['manage_content_model']
 		];
 
-		$response = $this->call('PATCH', 'api/entities/1', $params, [], [], $this->server);
+		$this->patch('api/roles/1', $params, $this->server);
 
-		$this->d->dump(json_decode($response->getContent()));
+		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->assertEquals(200, $response->status());
+		$this->seeStatusCode(200);
 
 		$this->seeJson([
-			'attribute1' => 'changed value'
+			'name' => 'Content Editor'
 		]);
-		$this->seeInDatabase('attribute_values_text', ['value' => 'changed value']);
+
+		$this->seeInDatabase('roles', ['id' => 1, 'name' => 'Content Editor']);
 		
 
 	}
 
-	public function testUpdateFails()
+	public function testDeleteRole()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$params = [
-			'locale_id' => 0,
-			'fields' => [
-				'attribute1' => ''
-			]
-		];
+		$this->delete('api/roles/3', [], $this->server);
 
-		$response = $this->call('PUT', 'api/entities/1', $params, [], [], $this->server);
+		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->d->dump(json_decode($response->getContent()));
+		$this->seeStatusCode(204);
 
-		$this->assertEquals(422, $response->status());
-
-		$this->seeJson([
-			'status_code' => 422,
-			'message' => '422 Unprocessable Entity',
-			'errors' => [
-				'entity' => [
-					'fields' => [
-						'attribute1' => [ 'This field is required.' ]
-					]
-				]
-			]
-		]);
-
-		$this->seeInDatabase('attribute_values_text', ['id' => 1, 'value' => 'value1']);
-
-	}
-
-	public function testDeleteEntity()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$response = $this->call('DELETE', 'api/entities/1', [], [], [], $this->server);
-
-		$this->assertEquals(204, $response->status());
-
+		$this->dontSeeInDatabase('roles', ['id' => 3]);
+		$this->dontSeeInDatabase('role_scopes', ['role_id' => 3, 'scope_id' => 'manage_clients']);
+		$this->dontSeeInDatabase('user_roles', ['role_id' => 3, 'user_id' => 2]);
 	}
 
 	public function testDeleteFails()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('DELETE', 'api/entities/1233', [], [], [], $this->server);
+		$this->delete('api/roles/123', [], $this->server);
 
-		$this->assertEquals(404, $response->status());
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(404);
 
 		$this->seeJson([
 			'status_code' => 404,
 			'message' => '404 Not Found'
 		]);
-		
 
+		$this->seeInDatabase('roles', ['id' => 1]);
 	}
 	
-	public function testFetchEntity()
+	public function testFetchRole()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities/1', [], [], [], $this->server);
+		$this->get('api/roles/3', $this->server);
 
-		$this->d->dump(json_decode($response->getContent()));
-		
-		$this->assertEquals(200, $response->status());
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(200);
 
 		$this->seeJson([
-			"id" => 1,
-			"entity_type_id" => 1,
-			"attribute_set_id" => 1,
-			"entity_type" => "tests",
-			"type" => "entity",
-			'fields' => [
-				'attribute1' => 'value1',
-				'attribute2' => 'value2',
-				'attribute3' => [
-					'en_US' => 'value3-en',
-					'fr_FR' => 'value3-fr'
-				]
-			]
+			"id"=> 3,
+		    "name"=> "Developer",
+		    "scopes"=> ['manage_clients'],
+		    "type"=> "role"
 		]);
 	}
 
@@ -352,11 +309,12 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities/112233', [], [], [], $this->server);
+		$this->get('api/roles/112233', $this->server);
 
-		$this->d->dump(json_decode($response->getContent()));
-		
-		$this->assertEquals(404, $response->status());
+		$this->d->dump(json_decode($this->response->getContent()));
+
+		$this->seeStatusCode(404);
+
 
 		$this->seeJson([
 			'status_code' => 404,
@@ -365,55 +323,17 @@ class EntityTest extends Orchestra\Testbench\TestCase
 	}
 	
 	
-	public function testGetEntities()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");	
-
-		$response = $this->call('GET', 'api/entities', [], [], [], $this->server);
-
-		$this->d->dump(json_decode($response->getContent()));
-		
-		$this->assertEquals(200, $response->status());
-
-		$this->assertEquals( 4, count(json_decode($response->getContent(), true)['data']) );
-	}
-
-	public function testGetParams()
+	public function testGetRoles()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		$response = $this->call('GET', 'api/entities', ['sort' => ['fields.attribute3'], 'limit' => 3, 'offset' => 0], [], [], $this->server);
+		$this->get('api/roles', $this->server);
 
-		$this->d->dump(json_decode($response->getContent()));
+		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->assertEquals( 3, count(json_decode($response->getContent(), true)['data']) );
+		$this->seeStatusCode(200);
+
+		$this->assertEquals( 3, count(json_decode($this->response->getContent(), true)['data']) );
 	}
 
-	public function testGetFilters()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$filter = [ 'fields.attribute1' => ['in' => ['value12']] ];
-
-		$response = $this->call('GET', 'api/entities', ['filter' => $filter], [], [], $this->server);
-
-		$this->d->dump(json_decode($response->getContent()));
-		
-		$this->assertEquals( 1, count(json_decode($response->getContent(), true)['data']) );
-		$this->assertEquals( 'value12', json_decode($response->getContent(), true)['data'][0]['fields']['attribute1'] );
-
-	}
-
-	public function testTypeRoutes()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$response = $this->call('GET', 'api/tests', [], [], [], $this->server);
-
-		$this->d->dump(json_decode($response->getContent()));
-		
-		$this->assertEquals( 3, count(json_decode($response->getContent(), true)['data']) );
-		$this->assertEquals( 1, json_decode($response->getContent(), true)['data'][0]['entity_type_id'] );
-
-	}
 }

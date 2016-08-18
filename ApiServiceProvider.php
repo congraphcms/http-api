@@ -13,6 +13,7 @@ namespace Cookbook\Api;
 use Dingo\Api\Auth\Auth;
 use Dingo\Api\Auth\Provider\OAuth2;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Response;
 
 /**
  * ApiServiceProvider service provider for Cookbook API
@@ -60,6 +61,7 @@ class ApiServiceProvider extends ServiceProvider {
 		include __DIR__ . '/Http/routes.php';
 
 		$this->extendDingoAuth();
+		$this->registerOAuthExceptionHandler();
 
 		// $this->mapApiCommands();
 	}
@@ -92,7 +94,7 @@ class ApiServiceProvider extends ServiceProvider {
             $provider = new OAuth2($app['oauth2-server.authorizer']->getChecker());
 
             $provider->setUserResolver(function ($id) use ($app){
-                $userRepository = $app->make('Cookbook\Contracts\Users\UserRepositoryContract');
+                $userRepository = $app->make('Cookbook\Contracts\OAuth2\UserRepositoryContract');
                 $user = $userRepository->fetch($id);
                 return $user;
             });
@@ -105,6 +107,53 @@ class ApiServiceProvider extends ServiceProvider {
 
             return $provider;
         });
+	}
+
+	/**
+	 * Register Middleware
+	 * 
+	 * @return void
+	 */
+	protected function registerOAuthExceptionHandler()
+	{
+		$this->app->make('Dingo\Api\Exception\Handler')->register(
+			function (\Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException $exception) {
+				$previous = $exception->getPrevious();
+		    	if($previous instanceof \League\OAuth2\Server\Exception\OAuthException) {
+		    		return Response::make(
+			    		[
+				    		'error' => $previous->errorType, 
+				    		'message' => $previous->getMessage(),
+				    		'status_code' => $previous->httpStatusCode
+			    		], 
+			    		$previous->httpStatusCode
+			    	);
+		    	}
+
+		    	return Response::make(
+		    		[
+		    			'message' => $exception->getMessage(),
+		    			'status_code' => $exception->getStatusCode()
+		    		],
+		    		$exception->getStatusCode()
+		    	);
+		    	
+			}
+		);
+
+		$this->app->make('Dingo\Api\Exception\Handler')->register(
+			function (\League\OAuth2\Server\Exception\InvalidScopeException $exception) {
+	    		return Response::make(
+		    		[
+			    		'error' => $exception->errorType, 
+			    		'message' => $exception->getMessage(),
+			    		'status_code' => $exception->httpStatusCode
+		    		], 
+		    		$exception->httpStatusCode
+		    	);
+		    	
+			}
+		);
 	}
 
 	/**

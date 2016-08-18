@@ -11,8 +11,10 @@ require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/LocaleDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/FileDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/WorkflowDbSeeder.php');
-require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/UserDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ScopeDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/RoleDbSeeder.php');
+require_once(__DIR__ . '/../database/seeders/ClientDbSeeder.php');
 require_once(__DIR__ . '/../database/seeders/ClearDB.php');
 
 class FileTest extends Orchestra\Testbench\TestCase
@@ -73,12 +75,21 @@ class FileTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'ClientDbSeeder'
+			'--class' => 'UserDbSeeder'
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'UserDbSeeder'
+			'--class' => 'ScopeDbSeeder'
 		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'RoleDbSeeder'
+		]);
+
+		$this->artisan('db:seed', [
+			'--class' => 'ClientDbSeeder'
+		]);
+		
 		$this->d = new Dumper();
 
 		$this->server = [
@@ -159,19 +170,16 @@ class FileTest extends Orchestra\Testbench\TestCase
 	protected function getPackageProviders($app)
 	{
 		return [
+			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
+			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Intervention\Image\ImageServiceProvider',
 			'Cookbook\Core\CoreServiceProvider', 
 			'Cookbook\Locales\LocalesServiceProvider', 
 			'Cookbook\Eav\EavServiceProvider', 
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider', 
-			'Cookbook\Users\UsersServiceProvider', 
-			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
-			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
-			'Cookbook\Api\ApiServiceProvider',
-			
+			'Cookbook\OAuth2\OAuth2ServiceProvider',
+			'Cookbook\Api\ApiServiceProvider'
 		];
 	}
 

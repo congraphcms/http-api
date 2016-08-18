@@ -12,7 +12,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 /**
- * UserDbSeeder
+ * ScopeDbSeeder
  * 
  * Seeds Database with needed entries before tests
  * 
@@ -25,29 +25,42 @@ use Illuminate\Support\Facades\DB;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class UserDbSeeder extends Seeder {
+class ScopeDbSeeder extends Seeder {
 
 	public function run()
 	{
-		DB::table('users')->truncate();
-		DB::table('users')->insert([
+		DB::table('oauth_scopes')->delete();
+		DB::table('oauth_scopes')->insert([
 			[
-				'name' => 'Jane Doe',
-				'email' => 'jane.doe@email.com',
-				// password: secret123
-				'password' => '$2y$10$RwECgIpcFIb52MbTKCsFde0/vhsuLsaEWItcXKTWCaLh3beZoiWjG',
+				'id' => 'manage_users',
+				'label' => 'Manage Users',
+				'description' => 'Allows user to manage other user accounts.',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			],
 			[
-				'name' => 'Dave Dee',
-				'email' => 'dave.dee@email.com',
-				// password: secret123
-				'password' => '$2y$10$RwECgIpcFIb52MbTKCsFde0/vhsuLsaEWItcXKTWCaLh3beZoiWjG',
+				'id' => 'manage_clients',
+				'label' => 'Manage Clients',
+				'description' => 'Allows user to manage OAuth clients.',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'id' => 'manage_content_model',
+				'label' => 'Manage Content Model',
+				'description' => 'Allows user to manage entity types and attributes.',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'id' => 'manage_entities',
+				'label' => 'Manage Entities',
+				'description' => 'Allows user to content.',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			]
 		]);
+
 	}
 
 }
