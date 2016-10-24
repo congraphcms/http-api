@@ -14,14 +14,14 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 	{
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		parent::setUp();
-		
+
 		$this->d = new Dumper();
 
 	}
 
 	public function tearDown()
 	{
-		
+
 		parent::tearDown();
 	}
 
@@ -66,13 +66,13 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 	protected function getPackageProviders($app)
 	{
 		return [
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider', 
-			'Cookbook\Users\UsersServiceProvider', 
+			'Cookbook\OAuth2\OAuth2ServiceProvider',
+			// 'Cookbook\Users\UsersServiceProvider', 
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Cookbook\Api\ApiServiceProvider',
@@ -124,10 +124,10 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		$collection = new Collection($data);
 
 		$meta = [
-			'filter' => ['fields.title' => '123'], 
-			'offset' => 10, 
-			'limit' => 10, 
-			'total' => 40, 
+			'filter' => ['fields.title' => '123'],
+			'offset' => 10,
+			'limit' => 10,
+			'total' => 40,
 			'sort' => '-created_at'
 		];
 
@@ -137,49 +137,49 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 
 
 		$meta = [
-			'filter' => ['fields.title' => '123'], 
-			'offset' => 10, 
-			'limit' => 0, 
-			'total' => 40, 
+			'filter' => ['fields.title' => '123'],
+			'offset' => 10,
+			'limit' => 0,
+			'total' => 40,
 			'sort' => '-created_at'
 		];
-		
+
 		$collection->setMeta($meta);
 		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
-			'filter' => ['fields.title' => '123'], 
-			'offset' => 0, 
-			'limit' => 10, 
-			'total' => 40, 
+			'filter' => ['fields.title' => '123'],
+			'offset' => 0,
+			'limit' => 10,
+			'total' => 40,
 			'sort' => '-created_at'
 		];
-		
+
 		$collection->setMeta($meta);
 		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
-			'filter' => ['fields.title' => '123'], 
-			'offset' => 30, 
-			'limit' => 10, 
-			'total' => 40, 
+			'filter' => ['fields.title' => '123'],
+			'offset' => 30,
+			'limit' => 10,
+			'total' => 40,
 			'sort' => '-created_at'
 		];
-		
+
 		$collection->setMeta($meta);
 		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);
 
 		$meta = [
-			'filter' => ['fields.title' => '123'], 
-			'offset' => 0, 
-			'limit' => 10, 
-			'total' => 5, 
+			'filter' => ['fields.title' => '123'],
+			'offset' => 0,
+			'limit' => 10,
+			'total' => 5,
 			'sort' => '-created_at'
 		];
-		
+
 		$collection->setMeta($meta);
 		$links = Linker::getLinks($collection, 'attribute');
 		$this->d->dump($links);

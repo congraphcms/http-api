@@ -19,13 +19,13 @@ use ReflectionClass;
 
 /**
  * API Dispatcher class
- * 
+ *
  * Dispatches API calls
- * 
+ *
  * @uses  		Illuminate\Routing\Controller
  * @uses  		Illuminate\Contracts\Bus\Dispatcher
  * @uses  		Illuminate\Contracts\Routing\ResponseFactory
- * 
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/eav
@@ -42,7 +42,7 @@ class Linker
 		{
 			$url = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB::' . $endpoint . '::fetch', ['id' => $result->id]);
+					->route('CB.' . $endpoint . '.fetch', ['id' => $result->id]);
 			$query = [];
 			if($result->getMeta('include'))
 			{
@@ -68,7 +68,7 @@ class Linker
 		{
 			$baseUrl = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB::' . $endpoint . '::get');
+					->route('CB.' . $endpoint . '.get');
 			$query = [];
 			if($result->getMeta('filter'))
 			{
@@ -165,7 +165,7 @@ class Linker
 	{
 		$url = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB::' . $value['type'] . '::fetch', ['id' => $value['id']]);
+					->route('CB.' . $value['type'] . '.fetch', ['id' => $value['id']]);
 		$links = [
 			'self' => $url
 		];
@@ -173,4 +173,3 @@ class Linker
 		return $value;
 	}
 }
-

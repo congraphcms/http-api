@@ -5,10 +5,10 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB::', 'middleware' => 'api.auth', 'providers' => ['oauth']], function($api){
+	$api->group(['as' => 'CB', 'middleware' => 'api.auth', 'providers' => ['oauth']], function($api){
 
 		// Attributes
-		$api->group(['prefix' => 'attributes', 'as' => 'attribute::'], function($api){
+		$api->group(['prefix' => 'attributes', 'as' => 'attribute'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@store' ] );
@@ -24,7 +24,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Attribute Sets
-		$api->group(['prefix' => 'attribute-sets', 'as' => 'attribute-set::'], function($api){
+		$api->group(['prefix' => 'attribute-sets', 'as' => 'attribute-set'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@store' ] );
@@ -40,7 +40,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Entity Types
-		$api->group(['prefix' => 'entity-types', 'as' => 'entity-type::'], function($api){
+		$api->group(['prefix' => 'entity-types', 'as' => 'entity-type'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@store' ] );
@@ -56,7 +56,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Entities
-		$api->group(['prefix' => 'entities', 'as' => 'entity::', 'scopes' => 'manage_entities'], function($api){
+		$api->group(['prefix' => 'entities', 'as' => 'entity', 'scopes' => 'manage_entities'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );
@@ -72,7 +72,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Files
-		$api->group(['prefix' => 'files', 'as' => 'file::', 'scopes' => 'manage_entities'], function($api){
+		$api->group(['prefix' => 'files', 'as' => 'file', 'scopes' => 'manage_entities'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@store' ] );
@@ -90,7 +90,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Locales
-		$api->group(['prefix' => 'locales', 'as' => 'locale::'], function($api){
+		$api->group(['prefix' => 'locales', 'as' => 'locale'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@store' ] );
@@ -106,7 +106,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Workflows
-		$api->group(['prefix' => 'workflows', 'as' => 'workflow::'], function($api){
+		$api->group(['prefix' => 'workflows', 'as' => 'workflow'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@store' ] );
@@ -122,7 +122,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Workflow points
-		$api->group(['prefix' => 'workflow-points', 'as' => 'workflow-point::'], function($api){
+		$api->group(['prefix' => 'workflow-points', 'as' => 'workflow-point'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@store' ] );
@@ -138,7 +138,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Users
-		$api->group(['prefix' => 'users', 'as' => 'user::', 'scopes' => 'manage_users'], function($api){
+		$api->group(['prefix' => 'users', 'as' => 'user', 'scopes' => 'manage_users'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@store' ] );
@@ -156,7 +156,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Roles
-		$api->group(['prefix' => 'roles', 'as' => 'role::', 'scopes' => 'manage_users'], function($api){
+		$api->group(['prefix' => 'roles', 'as' => 'role', 'scopes' => 'manage_users'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@store' ] );
@@ -172,7 +172,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Clients
-		$api->group(['prefix' => 'clients', 'as' => 'client::', 'scopes' => 'manage_clients'], function($api){
+		$api->group(['prefix' => 'clients', 'as' => 'client', 'scopes' => 'manage_clients'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@store' ] );
@@ -203,11 +203,11 @@ $api->version('v1', function ($api) {
 
 		});
 	});
-		
-	
+
+
 });
 
 // Route::get(
-// 	'test/files/{url}', 
+// 	'test/files/{url}',
 // 	[ 'as' => 'CB::file::serve', 'uses' => 'Cookbook\Api\Http\Controllers\FileServeController@index' ]
 // )->where('url', '(.*)');
