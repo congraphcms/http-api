@@ -5,21 +5,21 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB', 'middleware' => 'api.auth', 'providers' => ['oauth']], function($api){
+	$api->group(['as' => 'CB'], function($api){
 
 		// Attributes
 		$api->group(['prefix' => 'attributes', 'as' => 'attribute'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\AttributeController@show' ] );
 
 		});
 
@@ -27,15 +27,15 @@ $api->version('v1', function ($api) {
 		$api->group(['prefix' => 'attribute-sets', 'as' => 'attribute-set'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\AttributeSetController@show' ] );
 
 		});
 
@@ -43,20 +43,20 @@ $api->version('v1', function ($api) {
 		$api->group(['prefix' => 'entity-types', 'as' => 'entity-type'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\EntityTypeController@show' ] );
 
 		});
 
 		// Entities
-		$api->group(['prefix' => 'entities', 'as' => 'entity', 'scopes' => 'manage_entities'], function($api){
+		$api->group(['prefix' => 'entities', 'as' => 'entity'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );
@@ -72,7 +72,7 @@ $api->version('v1', function ($api) {
 		});
 
 		// Files
-		$api->group(['prefix' => 'files', 'as' => 'file', 'scopes' => 'manage_entities'], function($api){
+		$api->group(['prefix' => 'files', 'as' => 'file'], function($api){
 
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@store' ] );
@@ -93,15 +93,15 @@ $api->version('v1', function ($api) {
 		$api->group(['prefix' => 'locales', 'as' => 'locale'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@show' ] );
 
 		});
 
@@ -109,15 +109,15 @@ $api->version('v1', function ($api) {
 		$api->group(['prefix' => 'workflows', 'as' => 'workflow'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowController@show' ] );
 
 		});
 
@@ -125,70 +125,70 @@ $api->version('v1', function ($api) {
 		$api->group(['prefix' => 'workflow-points', 'as' => 'workflow-point'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'scopes' => 'manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'scopes' => 'manage_entities', 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => ['oauth:manage_content_model|manage_entities'], 'uses' => 'Cookbook\Api\Http\Controllers\WorkflowPointController@show' ] );
 
 		});
 
 		// Users
-		$api->group(['prefix' => 'users', 'as' => 'user', 'scopes' => 'manage_users'], function($api){
+		$api->group(['prefix' => 'users', 'as' => 'user'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@show' ] );
 			// Change password
-			$api->post( '/{id}/change-password', [ 'as' => 'changePassword', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@password' ] );
+			$api->post( '/{id}/change-password', [ 'as' => 'changePassword', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\UserController@password' ] );
 
 		});
 
 		// Roles
-		$api->group(['prefix' => 'roles', 'as' => 'role', 'scopes' => 'manage_users'], function($api){
+		$api->group(['prefix' => 'roles', 'as' => 'role'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => 'oauth:manage_users', 'uses' => 'Cookbook\Api\Http\Controllers\RoleController@show' ] );
 
 		});
 
 		// Clients
-		$api->group(['prefix' => 'clients', 'as' => 'client', 'scopes' => 'manage_clients'], function($api){
+		$api->group(['prefix' => 'clients', 'as' => 'client'], function($api){
 
 			// Create
-			$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@store' ] );
+			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_clients', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_clients', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@update' ] );
 			// Delete
-			$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@destroy' ] );
+			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_clients', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@destroy' ] );
 			// Get
-			$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@index' ] );
+			$api->get( '/', [ 'as' => 'get', 'middleware' => 'oauth:manage_clients', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@index' ] );
 			// Fetch
-			$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@show' ] );
+			$api->get( '/{id}', [ 'as' => 'fetch', 'middleware' => 'oauth:manage_clients', 'uses' => 'Cookbook\Api\Http\Controllers\ClientController@show' ] );
 
 		});
 
 		// Entities (with type prefix)
-		$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype', 'scopes' => 'manage_entities'], function($api){
+		$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
 
 			// Create
 			$api->post( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );

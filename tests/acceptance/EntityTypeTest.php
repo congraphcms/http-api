@@ -84,7 +84,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->artisan('db:seed', [
 			'--class' => 'ClientDbSeeder'
 		]);
-		
+
 		$this->d = new Dumper();
 
 		$this->server = [
@@ -156,9 +156,9 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\OAuth2\OAuth2ServiceProvider',
@@ -173,11 +173,11 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(401);
+		$this->seeStatusCode(400);
 
 		$this->seeJson([
-			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
-  			"status_code" => 401
+			"error" => "invalid_request",
+  			"status_code" => 400
 		]);
 	}
 
@@ -199,7 +199,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->post('api/entity-types', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
@@ -235,7 +235,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->post('api/entity-types', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(422);
 
 		$this->seeJson([
@@ -261,7 +261,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->put('api/entity-types/1', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(200);
 
 		$this->seeJson([
@@ -269,7 +269,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->seeInDatabase('entity_types', ['id' => 1, 'code' => 'type_code2']);
-		
+
 
 	}
 
@@ -284,7 +284,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->put('api/entity-types/1', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(422);
 
 		$this->seeJson([
@@ -308,7 +308,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->delete('api/entity-types/1', [], $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(204);
 	}
 
@@ -319,7 +319,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->delete('api/entity-types/1222333', [], $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(404);
 
 		$this->seeJson([
@@ -327,7 +327,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
+
 	public function testFetchEntityType()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -335,7 +335,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->get('api/entity-types/1', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(200);
 
 		$this->seeJson([
@@ -355,7 +355,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->get('api/entity-types/22333', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(404);
 
 		$this->seeJson([
@@ -363,8 +363,8 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
-	
+
+
 	public function testGetEntityTypes()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -372,7 +372,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->get('api/entity-types', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(200);
 
 		$this->assertEquals( 4, count(json_decode($this->response->getContent(), true)['data']) );
@@ -385,11 +385,11 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->get('api/entity-types?sort=-code&limit=2', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(200);
 
 		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
-		
+
 	}
 
 	public function testGetWithInclude()
@@ -399,7 +399,7 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->get('api/entity-types?sort=code&limit=2&include=attribute_sets.attributes', $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(200);
 
 		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
@@ -409,6 +409,6 @@ class EntityTypeTest extends Orchestra\Testbench\TestCase
 		$this->assertTrue(is_array(json_decode($this->response->getContent(), true)['data'][0]['attribute_sets'][0]['attributes']) );
 
 		$this->assertEquals('test_text_attribute', json_decode($this->response->getContent(), true)['data'][0]['attribute_sets'][0]['attributes'][0]['code'] );
-		
+
 	}
 }

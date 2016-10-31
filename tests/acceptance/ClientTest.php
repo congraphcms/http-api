@@ -101,7 +101,7 @@ class ClientTest extends Orchestra\Testbench\TestCase
 		// ]);
 
 		DB::disconnect();
-		
+
 		parent::tearDown();
 	}
 
@@ -149,9 +149,9 @@ class ClientTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\OAuth2\OAuth2ServiceProvider',
@@ -166,11 +166,11 @@ class ClientTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(401);
+		$this->seeStatusCode(400);
 
 		$this->seeJson([
-			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
-  			"status_code" => 401
+			"error" => "invalid_request",
+  			"status_code" => 400
 		]);
 	}
 
@@ -189,7 +189,7 @@ class ClientTest extends Orchestra\Testbench\TestCase
 		$this->post('api/clients', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
@@ -222,7 +222,7 @@ class ClientTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->seeInDatabase('oauth_clients', ['id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR', 'name' => 'Jane\'s Web App']);
-		
+
 
 	}
 
@@ -256,7 +256,7 @@ class ClientTest extends Orchestra\Testbench\TestCase
 
 		$this->seeInDatabase('oauth_clients', ['id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR']);
 	}
-	
+
 	public function testFetchClient()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -290,8 +290,8 @@ class ClientTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
-	
+
+
 	public function testGetClients()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");

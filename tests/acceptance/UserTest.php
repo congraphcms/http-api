@@ -101,7 +101,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 		// ]);
 
 		DB::disconnect();
-		
+
 		parent::tearDown();
 	}
 
@@ -149,9 +149,9 @@ class UserTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\OAuth2\OAuth2ServiceProvider',
@@ -166,11 +166,11 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(401);
+		$this->seeStatusCode(400);
 
 		$this->seeJson([
-			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
-  			"status_code" => 401
+			"error" => "invalid_request",
+  			"status_code" => 400
 		]);
 	}
 
@@ -186,7 +186,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 				[
 					'id' => 1,
 					'type' => 'role'
-				]	
+				]
 			]
 		];
 
@@ -195,7 +195,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 		$this->post('api/users', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
@@ -221,7 +221,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 				[
 					'id' => 1,
 					'type' => 'role'
-				]	
+				]
 			]
 		];
 
@@ -261,7 +261,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->seeInDatabase('users', ['id' => 1, 'name' => 'Jane Margaret Doe']);
-		
+
 
 	}
 
@@ -280,7 +280,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 		$this->seeStatusCode(204);
 
 		$this->seeInDatabase('users', ['id' => 1, 'name' => 'Jane Doe']);
-		
+
 
 	}
 
@@ -314,7 +314,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 		$this->seeInDatabase('users', ['id' => 1]);
 	}
-	
+
 	public function testFetchUser()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -348,8 +348,8 @@ class UserTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
-	
+
+
 	public function testGetUsers()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");

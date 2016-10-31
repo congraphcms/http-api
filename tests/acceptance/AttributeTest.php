@@ -60,7 +60,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/oauth-2/database/migrations'),
 		]);
 
-		
+
 
 		$this->artisan('db:seed', [
 			'--class' => 'EavDbSeeder'
@@ -108,7 +108,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		// ]);
 
 		DB::disconnect();
-		
+
 		parent::tearDown();
 	}
 
@@ -156,9 +156,9 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\OAuth2\OAuth2ServiceProvider',
@@ -173,19 +173,19 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(401);
+		$this->seeStatusCode(400);
 
 		$this->seeJson([
-			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
-  			"status_code" => 401
+			"error" => "invalid_request",
+  			"status_code" => 400
 		]);
 	}
-
+	
 	public function testCreateAttribute()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
 
-		
+
 		$params = [
 			'code' => 'code',
 			'field_type' => 'text',
@@ -202,7 +202,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 		$this->post('api/attributes', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
@@ -266,10 +266,10 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'code' => 'code2'
 		]);
 
-		
+
 
 		$this->seeInDatabase('attributes', ['id' => 1, 'code' => 'code2']);
-		
+
 
 	}
 
@@ -331,7 +331,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 
 		$this->seeInDatabase('attributes', ['id' => 1]);
 	}
-	
+
 	public function testFetchAttribute()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -369,8 +369,8 @@ class AttributeTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
-	
+
+
 	public function testGetAttributes()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");

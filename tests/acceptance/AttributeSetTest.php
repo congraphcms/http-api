@@ -56,7 +56,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/oauth-2/database/migrations'),
 		]);
 
-		
+
 
 		$this->artisan('db:seed', [
 			'--class' => 'EavDbSeeder'
@@ -158,15 +158,15 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Locales\LocalesServiceProvider', 
-			'Cookbook\Eav\EavServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider',
+			'Cookbook\Locales\LocalesServiceProvider',
+			'Cookbook\Eav\EavServiceProvider',
 			'Cookbook\Filesystem\FilesystemServiceProvider',
 			'Cookbook\Workflows\WorkflowsServiceProvider',
 			'Cookbook\OAuth2\OAuth2ServiceProvider',
 			'Cookbook\Api\ApiServiceProvider'
 		];
-		
+
 	}
 
 	public function testNotAuthorized() {
@@ -176,11 +176,11 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 		$this->d->dump(json_decode($this->response->getContent()));
 
-		$this->seeStatusCode(401);
+		$this->seeStatusCode(400);
 
 		$this->seeJson([
-			"message" => "Failed to authenticate because of bad credentials or an invalid authorization header.",
-  			"status_code" => 401
+			"error" => "invalid_request",
+  			"status_code" => 400
 		]);
 	}
 
@@ -202,7 +202,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		$this->post('api/attribute-sets', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(201);
 
 		$this->seeJson([
@@ -237,7 +237,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		$this->post('api/attribute-sets', $params, $this->server);
 
 		$this->d->dump(json_decode($this->response->getContent()));
-		
+
 		$this->seeStatusCode(422);
 
 		$this->seeJson([
@@ -270,7 +270,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->seeInDatabase('attribute_sets', ['id' => 1, 'code' => 'set_code2']);
-		
+
 
 	}
 
@@ -326,7 +326,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
+
 	public function testFetchAttributeSet()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -362,8 +362,8 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 			'message' => '404 Not Found'
 		]);
 	}
-	
-	
+
+
 	public function testGetAttributeSets()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");
@@ -402,7 +402,7 @@ class AttributeSetTest extends Orchestra\Testbench\TestCase
 
 		$this->assertEquals( 2, count(json_decode($this->response->getContent(), true)['data']) );
 		$this->assertEquals( 'test_fields', json_decode($this->response->getContent(), true)['data'][0]['entity_type']['code'] );
-		
-		
+
+
 	}
 }
