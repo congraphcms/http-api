@@ -180,7 +180,7 @@ class ClientTest extends Orchestra\Testbench\TestCase
 
 		$params = [
 			'name' => 'Jane\'s Mobile App',
-			'scopes' => ['manage_entities'],
+			'scopes' => ['manage_content'],
 			'grants' => ['password']
 		];
 

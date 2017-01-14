@@ -180,7 +180,7 @@ class AttributeTest extends Orchestra\Testbench\TestCase
   			"status_code" => 400
 		]);
 	}
-	
+
 	public function testCreateAttribute()
 	{
 		fwrite(STDOUT, __METHOD__ . "\n");

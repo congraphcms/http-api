@@ -181,7 +181,7 @@ class RoleTest extends Orchestra\Testbench\TestCase
 		$params = [
 			'name' => 'Project Manager',
 			'description' => 'Edits entities of only one project.',
-			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_entities']
+			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_content']
 		];
 
 		$this->refreshApplication();
@@ -197,7 +197,7 @@ class RoleTest extends Orchestra\Testbench\TestCase
 		$this->seeJson([
 			'name' => 'Project Manager',
 			'description' => 'Edits entities of only one project.',
-			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_entities']
+			'scopes' => ['manage_users', 'manage_clients', 'manage_content_model', 'manage_content']
 		]);
 
 		$this->seeInDatabase('roles', ['id' => $result['id'], 'name' => $result['name'], 'description' => $result['description']]);

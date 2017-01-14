@@ -13,12 +13,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 /**
  * ClientDbSeeder
- * 
+ *
  * Seeds Database with needed entries before tests
- * 
+ *
  * @uses   		Illuminate\Database\Schema\Blueprint
  * @uses   		Illuminate\Database\Seeder
- * 
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/api
@@ -64,19 +64,13 @@ class ClientDbSeeder extends Seeder {
 			],
 			[
 				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
-				'scope_id' => 'manage_entities',
+				'scope_id' => 'manage_content',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			],
 			[
 				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
 				'scope_id' => 'manage_users',
-				'created_at' => date("Y-m-d H:i:s"),
-				'updated_at' => date("Y-m-d H:i:s")
-			],
-			[
-				'client_id' => 'iuqp7E9myPGkoKuyvI9Jo06gIor2WsiivuUbuobR',
-				'scope_id' => 'manage_clients',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			]
@@ -120,7 +114,7 @@ class ClientDbSeeder extends Seeder {
 			]
 		]);
 
-		DB::table('oauth_access_token_scopes')->truncate();
+		DB::table('oauth_access_token_scopes')->delete();
 		DB::table('oauth_access_token_scopes')->insert([
 			[
 				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
@@ -142,7 +136,13 @@ class ClientDbSeeder extends Seeder {
 			],
 			[
 				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
-				'scope_id' => 'manage_entities',
+				'scope_id' => 'manage_roles',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'access_token_id' => 'e4qrk81UaGtbrJKNY3X5qe2vIn4A1cC3jzDeL9zz',
+				'scope_id' => 'manage_content',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			]

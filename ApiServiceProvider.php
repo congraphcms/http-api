@@ -47,6 +47,7 @@ class ApiServiceProvider extends ServiceProvider {
 		// });
 
 		$this->app['router']->middleware('cb.gettype', 'Cookbook\Api\Http\Middleware\GetEntityType');
+		$this->app['router']->middleware('cb.cors', 'Cookbook\Api\Http\Middleware\CORS');
 	}
 
 	/**

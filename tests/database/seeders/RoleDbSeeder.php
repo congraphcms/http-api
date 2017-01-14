@@ -13,12 +13,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 /**
  * RoleDbSeeder
- * 
+ *
  * Seeds Database with needed entries before tests
- * 
+ *
  * @uses   		Illuminate\Database\Schema\Blueprint
  * @uses   		Illuminate\Database\Seeder
- * 
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/api
@@ -73,13 +73,19 @@ class RoleDbSeeder extends Seeder {
 			],
 			[
 				'role_id' => 1,
-				'scope_id' => 'manage_entities',
+				'scope_id' => 'manage_content',
+				'created_at' => date("Y-m-d H:i:s"),
+				'updated_at' => date("Y-m-d H:i:s")
+			],
+			[
+				'role_id' => 1,
+				'scope_id' => 'manage_roles',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			],
 			[
 				'role_id' => 2,
-				'scope_id' => 'manage_entities',
+				'scope_id' => 'manage_content',
 				'created_at' => date("Y-m-d H:i:s"),
 				'updated_at' => date("Y-m-d H:i:s")
 			],
