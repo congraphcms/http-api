@@ -4,12 +4,13 @@ use Illuminate\Http\Request;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token');
+header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token, X-Auth-Token');
+header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB', function($api){
+	$api->group(['as' => 'CB'], function($api){
 
 		// Attributes
 		$api->group(['prefix' => 'attributes', 'as' => 'attribute'], function($api){
@@ -65,7 +66,7 @@ $api->version('v1', function ($api) {
 			// Create
 			$api->post( '/', [ 'as' => 'create', 'middleware' => 'oauth:manage_content', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );
 			// Update
-			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content_model', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@update' ] );
+			$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'middleware' => 'oauth:manage_content', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@update' ] );
 			// Delete
 			$api->delete( '/{id}', [ 'as' => 'delete', 'middleware' => 'oauth:manage_content', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@destroy' ] );
 			// Get
@@ -235,7 +236,6 @@ Route::post(
 		}
 	]
 );
-
 Route::post(
 	'oauth/owner', 
 	[
