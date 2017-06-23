@@ -3,10 +3,13 @@
 use Illuminate\Http\Request;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token');
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB', 'middleware' => 'cb.cors'], function($api){
+	$api->group(['as' => 'CB', function($api){
 
 		// Attributes
 		$api->group(['prefix' => 'attributes', 'as' => 'attribute'], function($api){
@@ -217,7 +220,7 @@ $api->version('v1', function ($api) {
 Route::post(
 	'oauth/access_token', 
 	[
-		'middleware' => 'cb.cors', 
+		// 'middleware' => 'cb.cors', 
 		'uses' => function() {
     		return Response::json(Authorizer::issueAccessToken());
 		}
@@ -226,16 +229,17 @@ Route::post(
 Route::post(
 	'oauth/revoke_token', 
 	[
-		'middleware' => 'cb.cors', 
+		// 'middleware' => 'cb.cors', 
 		'uses' => function() {
     		return Response::json(Authorizer::revokeToken());
 		}
 	]
 );
+
 Route::post(
 	'oauth/owner', 
 	[
-		'middleware' => 'cb.cors', 
+		// 'middleware' => 'cb.cors', 
 		'uses' => function() {
     		$owner = Authorizer::getOwner();
     		return Response::json(['data' => $owner->toArray()]);
