@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token, X-Auth-Token');
@@ -222,28 +221,21 @@ Route::post(
 	'oauth/access_token', 
 	[
 		// 'middleware' => 'cb.cors', 
-		'uses' => function() {
-    		return Response::json(Authorizer::issueAccessToken());
-		}
+		'uses' => 'Cookbook\Api\Http\Controllers\OAuthController@issue'
 	]
 );
 Route::post(
 	'oauth/revoke_token', 
 	[
 		// 'middleware' => 'cb.cors', 
-		'uses' => function() {
-    		return Response::json(Authorizer::revokeToken());
-		}
+		'uses' => 'Cookbook\Api\Http\Controllers\OAuthController@revoke'
 	]
 );
 Route::post(
 	'oauth/owner', 
 	[
 		// 'middleware' => 'cb.cors', 
-		'uses' => function() {
-    		$owner = Authorizer::getOwner();
-    		return Response::json(['data' => $owner->toArray()]);
-		}
+		'uses' => 'Cookbook\Api\Http\Controllers\OAuthController@owner'
 	]
 );
 

@@ -10,13 +10,10 @@
 
 namespace Cookbook\Api\Http\Controllers;
 
-use Cookbook\Eav\Commands\Attributes\AttributeGetCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeFetchCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeCreateCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeUpdateCommand;
-use Cookbook\Eav\Commands\Attributes\AttributeDeleteCommand;
-
+use League\OAuth2\Server\Exception\OAuthException;
+use Illuminate\Routing\Controller;
 use Dingo\Api\Http\Response;
+use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 
 /**
@@ -30,48 +27,56 @@ use Dingo\Api\Http\Response;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class AttributeController extends ApiController
+class OAuthController extends Controller
 {
-	public function index()
+	public function issue()
 	{
-		$command = new AttributeGetCommand($this->request->all());
-		$result = $this->dispatchCommand($command);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
-		return $response;
+		try
+		{
+			$response = new Response(Authorizer::issueAccessToken(), 200);
+			return $response;
+		}
+		catch(OAuthException $e)
+		{
+			return $this->handleOAuthException($e);
+		}
+		
 	}
 
-	public function show($id)
+	public function revoke()
 	{
-		$command = new AttributeFetchCommand($this->request->all(), $id);
-		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
-		$response = new Response($result->toArray($this->includeMeta, $this->nestedInclude), 200);
-		return $response;
+		try
+		{
+			$response = new Response(Authorizer::revokeToken(), 200);
+			return $response;
+		}
+		catch(OAuthException $e)
+		{
+			return $this->handleOAuthException($e);
+		}
 	}
 
-	public function store()
+	public function owner()
 	{
-		$command = new AttributeCreateCommand($this->request->all());
-		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$result->id]);
-
-		$response = new Response($result->toArray(false, false), 201);
-		return $response;
+		try
+		{
+			$owner = Authorizer::getOwner();
+			$response = new Response(['data' => $owner->toArray()], 200);
+			return $response;
+		}
+		catch(OAuthException $e)
+		{
+			return $this->handleOAuthException($e);
+		}
 	}
 
-	public function update($id)
-	{
-		$command = new AttributeUpdateCommand($this->request->all(), $id);
-		$result = $this->dispatchCommand($command);
-		$link = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('attributes.fetch', [$id]);
-		$response = new Response($result->toArray(false, false), 200);
-		return $response;
-	}
 
-	public function destroy($id)
+	private function handleOAuthException($e)
 	{
-		$command = new AttributeDeleteCommand($this->request->all(), $id);
-		$result = $this->dispatchCommand($command);
-		return $this->response->noContent();
+		return new Response([
+	    		'error' => $e->errorType, 
+	    		'message' => $e->getMessage(),
+	    		'status_code' => $e->httpStatusCode
+			], $e->httpStatusCode);
 	}
 }

@@ -125,9 +125,9 @@ class ApiServiceProvider extends ServiceProvider {
 			    		[
 				    		'error' => $previous->errorType, 
 				    		'message' => $previous->getMessage(),
-				    		'status_code' => $previous->httpStatusCode
+				    		'status_code' => 401
 			    		], 
-			    		$previous->httpStatusCode
+			    		401
 			    	);
 		    	}
 
