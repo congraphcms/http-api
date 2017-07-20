@@ -231,7 +231,7 @@ Route::post(
 		'uses' => 'Cookbook\Api\Http\Controllers\OAuthController@revoke'
 	]
 );
-Route::post(
+Route::get(
 	'oauth/owner', 
 	[
 		// 'middleware' => 'cb.cors', 
