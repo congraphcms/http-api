@@ -118,10 +118,10 @@ class UserTest extends Orchestra\Testbench\TestCase
 		$app['config']->set('database.connections.testbench', [
 			'driver'   	=> 'mysql',
 			'host'      => '127.0.0.1',
-			'port'		=> '33060',
+			'port'		=> '3306',
 			'database'	=> 'cookbook_testbench',
-			'username'  => 'homestead',
-			'password'  => 'secret',
+			'username'  => 'root',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
@@ -160,7 +160,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 	}
 
 	public function testNotAuthorized() {
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->get('api/users/1');
 
@@ -176,7 +176,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testCreateUser()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
 			'name' => 'John Doe',
@@ -211,7 +211,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testCreateFails()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
 			'name' => 'John Doe',
@@ -244,7 +244,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testUpdateUser()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
 			'name' => 'Jane Margaret Doe'
@@ -267,7 +267,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testChangeUserPassword()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$params = [
 			'password' => 'newpassword123'
@@ -286,7 +286,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testDeleteUser()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->delete('api/users/1', [], $this->server);
 
@@ -299,7 +299,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testDeleteFails()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->delete('api/users/123', [], $this->server);
 
@@ -317,7 +317,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testFetchUser()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->get('api/users/1', $this->server);
 
@@ -335,7 +335,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testFetchFails()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->get('api/users/112233', $this->server);
 
@@ -352,7 +352,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testGetUsers()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->get('api/users', $this->server);
 
@@ -365,7 +365,7 @@ class UserTest extends Orchestra\Testbench\TestCase
 
 	public function testGetParams()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		// fwrite(STDOUT, __METHOD__ . "\n");
 
 		$this->get('api/users?sort=-email&limit=3', $this->server);
 

@@ -13,8 +13,8 @@
     "require": {
         "php": ">=5.5.9",
         "cookbook/contracts": "dev-master",
-        "cookbook/core": "dev-auth",
-        "cookbook/eav": "dev-auth",
+        "cookbook/core": "dev-master",
+        "cookbook/eav": "dev-master",
         "cookbook/oauth-2": "dev-master",
         "dingo/api": "1.0.*@dev"
     },
