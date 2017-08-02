@@ -59,7 +59,8 @@ class GetEntityType
 	{
 		$type = $request->route('type');
 		$entityTypes = $this->entityTypeRepository->get(['endpoint' => $type]);
-		if( ! empty($entityTypes) )
+		
+		if( ! empty($entityTypes) && !empty($entityTypes->toArray()))
 		{
 			$entityType = $entityTypes[0];
 			$filter = $request->input('filter', []);
