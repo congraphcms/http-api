@@ -14,6 +14,9 @@
         "php": ">=5.5.9",
         "cookbook/contracts": "dev-master",
         "cookbook/core": "dev-master",
+        "cookbook/locales": "dev-master",
+        "cookbook/workflows": "dev-master",
+        "cookbook/filesystem": "dev-master",
         "cookbook/eav": "dev-master",
         "cookbook/oauth-2": "dev-master",
         "dingo/api": "1.0.*@dev"
