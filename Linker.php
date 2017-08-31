@@ -16,6 +16,7 @@ use Cookbook\Core\Repositories\DataTransferObject;
 use Cookbook\Core\Repositories\Model;
 use Exception;
 use ReflectionClass;
+use Illuminate\Support\Facades\Request;
 
 /**
  * API Dispatcher class
@@ -34,15 +35,16 @@ use ReflectionClass;
  */
 class Linker
 {
+
+
 	public static function getLinks(DataTransferObject $result, $endpoint)
 	{
 		$links = [];
-
 		if($result instanceof Model)
 		{
 			$url = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB.' . $endpoint . '.fetch', ['id' => $result->id]);
+					->route(self::getRoutePrefix() . $endpoint . '.fetch', ['id' => $result->id]);
 			$query = [];
 			if($result->getMeta('include'))
 			{
@@ -165,11 +167,20 @@ class Linker
 	{
 		$url = app('Dingo\Api\Routing\UrlGenerator')
 					->version('v1')
-					->route('CB.' . $value['type'] . '.fetch', ['id' => $value['id']]);
+					->route(self::getRoutePrefix() . $value['type'] . '.fetch', ['id' => $value['id']]);
 		$links = [
 			'self' => $url
 		];
 		$value['links'] = $links;
 		return $value;
+	}
+
+	protected static function getRoutePrefix() {
+		$routePrefix = 'CB.';
+		if(Request::segment(2) == 'delivery'){
+			$routePrefix .= 'delivery.';
+		}
+
+		return $routePrefix;
 	}
 }

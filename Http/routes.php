@@ -9,7 +9,7 @@ header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-	$api->group(['as' => 'CB'], function($api){
+	$api->group(['as' => 'CB' , /*'middleware' => 'cb.cors'*/], function($api){
 
 		// Attributes
 		$api->group(['prefix' => 'attributes', 'as' => 'attribute'], function($api){
@@ -197,16 +197,12 @@ $api->version('v1', function ($api) {
 
 		});
 
+
+		// DELIVERY API //
+		//////////////////
 		$api->group(['prefix' => 'delivery', 'as' => 'delivery'], function($api){
 				// Entities
 			$api->group(['prefix' => 'entities', 'as' => 'entity'], function($api){
-
-				// Create
-				$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );
-				// Update
-				$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@update' ] );
-				// Delete
-				$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@destroy' ] );
 				// Get
 				$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
 				// Fetch
@@ -216,13 +212,6 @@ $api->version('v1', function ($api) {
 
 			// Files
 			$api->group(['prefix' => 'files', 'as' => 'file'], function($api){
-
-				// Create
-				$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@store' ] );
-				// Update
-				$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@update' ] );
-				// Delete
-				$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@destroy' ] );
 				// Get
 				$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\FileController@index' ] );
 				// Fetch
@@ -234,13 +223,6 @@ $api->version('v1', function ($api) {
 
 			// Locales
 			$api->group(['prefix' => 'locales', 'as' => 'locale'], function($api){
-
-				// Create
-				$api->post( '/', [ 'as' => 'create', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@store' ] );
-				// Update
-				$api->match(['PUT', 'PATCH'], '/{id}', [ 'as' => 'update', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@update' ] );
-				// Delete
-				$api->delete( '/{id}', [ 'as' => 'delete', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@destroy' ] );
 				// Get
 				$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\LocaleController@index' ] );
 				// Fetch
@@ -250,13 +232,6 @@ $api->version('v1', function ($api) {
 
 			// Entities (with type prefix)
 			$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
-
-				// Create
-				$api->post( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@store' ] );
-				// Update
-				$api->match(['PUT', 'PATCH'], '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@update' ] );
-				// Delete
-				$api->delete( '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@destroy' ] );
 				// Get
 				$api->get( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
 				// Fetch
