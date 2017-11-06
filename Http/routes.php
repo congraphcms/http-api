@@ -204,9 +204,9 @@ $api->version('v1', function ($api) {
 				// Entities
 			$api->group(['prefix' => 'entities', 'as' => 'entity'], function($api){
 				// Get
-				$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
+				$api->get( '/', [ 'as' => 'get', 'uses' => 'Cookbook\Api\Http\Controllers\EntityDeliveryController@index' ] );
 				// Fetch
-				$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@show' ] );
+				$api->get( '/{id}', [ 'as' => 'fetch', 'uses' => 'Cookbook\Api\Http\Controllers\EntityDeliveryController@show' ] );
 
 			});
 
@@ -233,9 +233,9 @@ $api->version('v1', function ($api) {
 			// Entities (with type prefix)
 			$api->group(['prefix' => '{type}', 'middleware' => 'cb.gettype'], function($api){
 				// Get
-				$api->get( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@index' ] );
+				$api->get( '/', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityDeliveryController@index' ] );
 				// Fetch
-				$api->get( '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityController@show' ] );
+				$api->get( '/{id}', [ 'uses' => 'Cookbook\Api\Http\Controllers\EntityDeliveryController@show' ] );
 
 			});
 		});
