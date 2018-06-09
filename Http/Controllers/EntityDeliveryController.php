@@ -14,6 +14,7 @@ use Cookbook\Api\Linker;
 use Cookbook\Eav\Commands\Entities\EntityFetchCommand;
 use Cookbook\Eav\Commands\Entities\EntityGetCommand;
 use Dingo\Api\Http\Response;
+use Illuminate\Support\Facades\Config;
 
 
 /**
