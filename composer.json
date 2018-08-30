@@ -15,7 +15,7 @@
         "congraph/workflows": "self.version",
         "congraph/filesystem": "self.version",
         "congraph/eav": "self.version",
-        "congraph/oauth-2": "self.version",
+        "congraph/oauth2": "self.version",
         "dingo/api": "1.0.*@dev"
     },
     "require-dev": {
