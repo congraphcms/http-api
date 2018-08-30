@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Api\Linker;
-use Cookbook\OAuth2\Commands\Roles\RoleCreateCommand;
-use Cookbook\OAuth2\Commands\Roles\RoleDeleteCommand;
-use Cookbook\OAuth2\Commands\Roles\RoleFetchCommand;
-use Cookbook\OAuth2\Commands\Roles\RoleGetCommand;
-use Cookbook\OAuth2\Commands\Roles\RoleUpdateCommand;
+use Congraph\Api\Linker;
+use Congraph\OAuth2\Commands\Roles\RoleCreateCommand;
+use Congraph\OAuth2\Commands\Roles\RoleDeleteCommand;
+use Congraph\OAuth2\Commands\Roles\RoleFetchCommand;
+use Congraph\OAuth2\Commands\Roles\RoleGetCommand;
+use Congraph\OAuth2\Commands\Roles\RoleUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -26,7 +26,7 @@ use Dingo\Api\Http\Response;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Api\Linker;
-use Cookbook\Eav\Commands\Entities\EntityFetchCommand;
-use Cookbook\Eav\Commands\Entities\EntityGetCommand;
+use Congraph\Api\Linker;
+use Congraph\Eav\Commands\Entities\EntityFetchCommand;
+use Congraph\Eav\Commands\Entities\EntityGetCommand;
 use Dingo\Api\Http\Response;
 use Illuminate\Support\Facades\Config;
 
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Config;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -34,7 +34,7 @@ class EntityDeliveryController extends ApiController
 	{
 		if(Config::get('cb.eav.using_elastic'))
 		{
-			$command = new \Cookbook\EntityElastic\Commands\Entities\EntityGetCommand($this->request->all());
+			$command = new \Congraph\EntityElastic\Commands\Entities\EntityGetCommand($this->request->all());
 		}
 		else
 		{
@@ -53,7 +53,7 @@ class EntityDeliveryController extends ApiController
 	{
 		if(Config::get('cb.eav.using_elastic'))
 		{
-			$command = new \Cookbook\EntityElastic\Commands\Entities\EntityFetchCommand($this->request->all(), $id);
+			$command = new \Congraph\EntityElastic\Commands\Entities\EntityFetchCommand($this->request->all(), $id);
 		}
 		else
 		{

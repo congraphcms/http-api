@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Middleware;
+namespace Congraph\Api\Http\Middleware;
 
 use Closure;
-use Cookbook\Contracts\Eav\EntityTypeRepositoryContract;
+use Congraph\Contracts\Eav\EntityTypeRepositoryContract;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * 
  * @author      Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright   Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package     cookbook/eav
+ * @package     congraph/eav
  * @since       0.1.0-alpha
  * @version     0.1.0-alpha
  */
@@ -31,14 +31,14 @@ class GetEntityType
 	/**
 	 * Repository for entity types
 	 * 
-	 * @var Cookbook\Contracts\Eav\EntityTypeRepositoryContract
+	 * @var Congraph\Contracts\Eav\EntityTypeRepositoryContract
 	 */
 	protected $entityTypeRepository;
 
 	/**
 	 * Create new GetEntityType
 	 * 
-	 * @param \Cookbook\Contracts\Eav\EntityTypeRepositoryContract $repository
+	 * @param \Congraph\Contracts\Eav\EntityTypeRepositoryContract $repository
 	 * 
 	 * @return void
 	 */

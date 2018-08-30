@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
 use League\OAuth2\Server\Exception\OAuthException;
 use Illuminate\Routing\Controller;
@@ -23,7 +23,7 @@ use LucaDegasperi\OAuth2Server\Facades\Authorizer;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

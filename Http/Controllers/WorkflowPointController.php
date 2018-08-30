@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Api\Linker;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointCreateCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointDeleteCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointFetchCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointGetCommand;
-use Cookbook\Workflows\Commands\WorkflowPoints\WorkflowPointUpdateCommand;
+use Congraph\Api\Linker;
+use Congraph\Workflows\Commands\WorkflowPoints\WorkflowPointCreateCommand;
+use Congraph\Workflows\Commands\WorkflowPoints\WorkflowPointDeleteCommand;
+use Congraph\Workflows\Commands\WorkflowPoints\WorkflowPointFetchCommand;
+use Congraph\Workflows\Commands\WorkflowPoints\WorkflowPointGetCommand;
+use Congraph\Workflows\Commands\WorkflowPoints\WorkflowPointUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -26,7 +26,7 @@ use Dingo\Api\Http\Response;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

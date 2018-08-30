@@ -1,73 +1,32 @@
 {
-    "name": "cookbook/api",
-
+    "name": "congraph/api",
     "description": "",
-
     "authors": [
         {
             "name": "Nikola Plavsic",
             "email": "nikolaplavsic@gmail.com"
         }
     ],
-
     "require": {
         "php": ">=5.5.9",
-        "cookbook/contracts": "dev-master",
-        "cookbook/core": "dev-master",
-        "cookbook/locales": "dev-master",
-        "cookbook/workflows": "dev-master",
-        "cookbook/filesystem": "dev-master",
-        "cookbook/eav": "dev-master",
-        "cookbook/oauth-2": "dev-master",
+        "congraph/contracts": "self.version",
+        "congraph/core": "self.version",
+        "congraph/locales": "self.version",
+        "congraph/workflows": "self.version",
+        "congraph/filesystem": "self.version",
+        "congraph/eav": "self.version",
+        "congraph/oauth-2": "self.version",
         "dingo/api": "1.0.*@dev"
     },
-
-    "repositories": [
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/contracts.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/core.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/eav.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/filesystem.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/locales.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/workflows.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/oauth-2.git"
-        },
-        {
-            "type": "git",
-            "url":  "git@bitbucket.org:cookbookcms/users.git"
-        }
-    ],
-
     "require-dev": {
         "phpunit/phpunit": "4.5.*",
         "orchestra/testbench": "3.1.*"
     },
-
     "autoload": {
         "psr-4": {
-            "Cookbook\\Api\\": ""
+            "Congraph\\Api\\": ""
         },
         "classmap": []
     },
-
     "minimum-stability": "dev"
 }

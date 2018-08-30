@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api;
+namespace Congraph\Api;
 
 use Closure;
 use Exception;
@@ -19,8 +19,8 @@ use Illuminate\Http\Response;
 use Illuminate\Contracts\Bus\Dispatcher as CommandDispatcher;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 
-use Cookbook\Core\Exceptions\Exception as CookbookException;
-use Cookbook\Core\Traits\MapperTrait;
+use Congraph\Core\Exceptions\Exception as CongraphException;
+use Congraph\Core\Traits\MapperTrait;
 
 /**
  * API Dispatcher class
@@ -33,7 +33,7 @@ use Cookbook\Core\Traits\MapperTrait;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/eav
+ * @package 	congraph/eav
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -304,18 +304,18 @@ class Dispatcher
 
 	protected function handleException(Exception $e)
 	{
-		// if it's a cookbook exception, 
+		// if it's a congraph exception, 
 		// use it's toArray function to ger all errors
-		if( $e instanceOf CookbookException )
+		if( $e instanceOf CongraphException )
 		{
-			return $this->handleCookbookException($e);
+			return $this->handleCongraphException($e);
 		}
 
 		// if it's some other exception return 500 error from exception
 		return $this->handleGenericException($e);
 	}
 
-	protected function handleCookbookException(CookbookException $e)
+	protected function handleCongraphException(CongraphException $e)
 	{
 		$errors = $e->toArray();
 
@@ -389,7 +389,7 @@ class Dispatcher
 	{
 		$response = new Response(json_encode($data), $code);
 
-		$response->header('Content-Type', 'application/vnd.cookbook.api+json');
+		$response->header('Content-Type', 'application/vnd.congraph.api+json');
 
 		if( ! empty($headers) && is_array($headers) )
 		{
@@ -433,7 +433,7 @@ class Dispatcher
 	 */
 	protected function fireEvents($endpoint, $beforeOrAfter, &$args)
 	{
-		$eventName = 'Cookbook.api.' . $beforeOrAfter . '.' . $endpoint;
+		$eventName = 'Congraph.api.' . $beforeOrAfter . '.' . $endpoint;
 
 		$this->event->fire($eventName, $args);
 	}

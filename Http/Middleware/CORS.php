@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Middleware;
+namespace Congraph\Api\Http\Middleware;
 
 use Closure;
 
@@ -21,7 +21,7 @@ use Closure;
  * 
  * @author      Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright   Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package     cookbook/eav
+ * @package     congraph/eav
  * @since       0.1.0-alpha
  * @version     0.1.0-alpha
  */

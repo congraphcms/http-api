@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api;
+namespace Congraph\Api;
 
 use Closure;
-use Cookbook\Core\Repositories\Collection;
-use Cookbook\Core\Repositories\DataTransferObject;
-use Cookbook\Core\Repositories\Model;
+use Congraph\Core\Repositories\Collection;
+use Congraph\Core\Repositories\DataTransferObject;
+use Congraph\Core\Repositories\Model;
 use Exception;
 use ReflectionClass;
 use Illuminate\Support\Facades\Request;
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Request;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/eav
+ * @package 	congraph/eav
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

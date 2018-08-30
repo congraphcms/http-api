@@ -1,9 +1,9 @@
 <?php
 
-use Cookbook\Api\Linker;
-use Cookbook\Core\Facades\Trunk;
-use Cookbook\Core\Repositories\Collection;
-use Cookbook\Core\Repositories\Model;
+use Congraph\Api\Linker;
+use Congraph\Core\Facades\Trunk;
+use Congraph\Core\Repositories\Collection;
+use Congraph\Core\Repositories\Model;
 use Illuminate\Support\Debug\Dumper;
 use Illuminate\Support\Facades\Cache;
 
@@ -39,7 +39,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 			'driver'   	=> 'mysql',
 			'host'      => '127.0.0.1',
 			'port'		=> '3306',
-			'database'	=> 'cookbook_testbench',
+			'database'	=> 'congraph_testbench',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
@@ -57,7 +57,7 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 		// $config = require(realpath(__DIR__.'/../../config/eav.php'));
 
 		// $app['config']->set(
-		// 	'Cookbook::eav', $config
+		// 	'Congraph::eav', $config
 		// );
 
 		// var_dump('CONFIG SETTED');
@@ -66,16 +66,16 @@ class LinkerTest extends Orchestra\Testbench\TestCase
 	protected function getPackageProviders($app)
 	{
 		return [
-			'Cookbook\Core\CoreServiceProvider',
-			'Cookbook\Locales\LocalesServiceProvider',
-			'Cookbook\Eav\EavServiceProvider',
-			'Cookbook\Filesystem\FilesystemServiceProvider',
-			'Cookbook\Workflows\WorkflowsServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider',
-			// 'Cookbook\Users\UsersServiceProvider', 
+			'Congraph\Core\CoreServiceProvider',
+			'Congraph\Locales\LocalesServiceProvider',
+			'Congraph\Eav\EavServiceProvider',
+			'Congraph\Filesystem\FilesystemServiceProvider',
+			'Congraph\Workflows\WorkflowsServiceProvider',
+			'Congraph\OAuth2\OAuth2ServiceProvider',
+			// 'Congraph\Users\UsersServiceProvider', 
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
-			'Cookbook\Api\ApiServiceProvider',
+			'Congraph\Api\ApiServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider'
 		];
 	}

@@ -34,7 +34,7 @@ class OAuthTest extends Orchestra\Testbench\TestCase
 
 		// $this->artisan('migrate', [
 		// 	'--database' => 'testbench',
-		// 	'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/users/database/migrations'),
+		// 	'--realpath' => realpath(__DIR__.'/../../vendor/congraph/users/database/migrations'),
 		// ]);
 
 		$this->artisan('db:seed', [
@@ -78,7 +78,7 @@ class OAuthTest extends Orchestra\Testbench\TestCase
 			'driver'   	=> 'mysql',
 			'host'      => '127.0.0.1',
 			'port'		=> '3306',
-			'database'	=> 'cookbook_testbench',
+			'database'	=> 'congraph_testbench',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
@@ -95,7 +95,7 @@ class OAuthTest extends Orchestra\Testbench\TestCase
 		    ],
 			'password' => [
 		        'class' => '\League\OAuth2\Server\Grant\PasswordGrant',
-		        'callback' => '\Cookbook\OAuth2\PasswordGrantVerifier@verify',
+		        'callback' => '\Congraph\OAuth2\PasswordGrantVerifier@verify',
 		        'access_token_ttl' => 3600
 		    ],
 		    'refresh_token' => [
@@ -112,8 +112,8 @@ class OAuthTest extends Orchestra\Testbench\TestCase
 		return [
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
-			'Cookbook\Core\CoreServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider',
+			'Congraph\Core\CoreServiceProvider',
+			'Congraph\OAuth2\OAuth2ServiceProvider',
 
 
 		];

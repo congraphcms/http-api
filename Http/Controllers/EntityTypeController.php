@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Api\Linker;
-use Cookbook\Eav\Commands\EntityTypes\EntityTypeCreateCommand;
-use Cookbook\Eav\Commands\EntityTypes\EntityTypeDeleteCommand;
-use Cookbook\Eav\Commands\EntityTypes\EntityTypeFetchCommand;
-use Cookbook\Eav\Commands\EntityTypes\EntityTypeGetCommand;
-use Cookbook\Eav\Commands\EntityTypes\EntityTypeUpdateCommand;
+use Congraph\Api\Linker;
+use Congraph\Eav\Commands\EntityTypes\EntityTypeCreateCommand;
+use Congraph\Eav\Commands\EntityTypes\EntityTypeDeleteCommand;
+use Congraph\Eav\Commands\EntityTypes\EntityTypeFetchCommand;
+use Congraph\Eav\Commands\EntityTypes\EntityTypeGetCommand;
+use Congraph\Eav\Commands\EntityTypes\EntityTypeUpdateCommand;
 use Dingo\Api\Http\Response;
 
 /**
@@ -25,7 +25,7 @@ use Dingo\Api\Http\Response;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

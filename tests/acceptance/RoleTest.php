@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
-use Cookbook\Core\Facades\Trunk;
+use Congraph\Core\Facades\Trunk;
 use Illuminate\Support\Debug\Dumper;
 
 require_once(__DIR__ . '/../database/seeders/EavDbSeeder.php');
@@ -27,27 +27,27 @@ class RoleTest extends Orchestra\Testbench\TestCase
 		// path unless `--path` option is available.
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/eav/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/eav/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/filesystem/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/filesystem/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/locales/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/locales/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/workflows/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/workflows/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/cookbook/users/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/users/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
@@ -119,7 +119,7 @@ class RoleTest extends Orchestra\Testbench\TestCase
 			'driver'   	=> 'mysql',
 			'host'      => '127.0.0.1',
 			'port'		=> '3306',
-			'database'	=> 'cookbook_testbench',
+			'database'	=> 'congraph_testbench',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
@@ -137,7 +137,7 @@ class RoleTest extends Orchestra\Testbench\TestCase
 		// $config = require(realpath(__DIR__.'/../../config/eav.php'));
 
 		// $app['config']->set(
-		// 	'Cookbook::eav', $config
+		// 	'Congraph::eav', $config
 		// );
 
 		// var_dump('CONFIG SETTED');
@@ -149,13 +149,13 @@ class RoleTest extends Orchestra\Testbench\TestCase
 			'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 			'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
 			'Dingo\Api\Provider\LaravelServiceProvider',
-			'Cookbook\Core\CoreServiceProvider',
-			'Cookbook\Locales\LocalesServiceProvider',
-			'Cookbook\Eav\EavServiceProvider',
-			'Cookbook\Filesystem\FilesystemServiceProvider',
-			'Cookbook\Workflows\WorkflowsServiceProvider',
-			'Cookbook\OAuth2\OAuth2ServiceProvider',
-			'Cookbook\Api\ApiServiceProvider'
+			'Congraph\Core\CoreServiceProvider',
+			'Congraph\Locales\LocalesServiceProvider',
+			'Congraph\Eav\EavServiceProvider',
+			'Congraph\Filesystem\FilesystemServiceProvider',
+			'Congraph\Workflows\WorkflowsServiceProvider',
+			'Congraph\OAuth2\OAuth2ServiceProvider',
+			'Congraph\Api\ApiServiceProvider'
 		];
 	}
 

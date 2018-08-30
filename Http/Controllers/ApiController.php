@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
 use Closure;
-use Cookbook\Core\Bus\CommandDispatcher;
-use Cookbook\Core\Exceptions\BadRequestException;
-use Cookbook\Core\Exceptions\Exception as CookbookException;
-use Cookbook\Core\Exceptions\NotFoundException;
-use Cookbook\Core\Exceptions\ValidationException;
+use Congraph\Core\Bus\CommandDispatcher;
+use Congraph\Core\Exceptions\BadRequestException;
+use Congraph\Core\Exceptions\Exception as CongraphException;
+use Congraph\Core\Exceptions\NotFoundException;
+use Congraph\Core\Exceptions\ValidationException;
 use Dingo\Api\Exception\ResourceException;
 use Dingo\Api\Routing\Helpers;
 use Exception;
@@ -32,12 +32,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Controller for handling API requests 
  * 
  * @uses  		Illuminate\Routing\Controller
- * @uses  		Cookbook\Core\Bus\CommandDispatcher
+ * @uses  		Congraph\Core\Bus\CommandDispatcher
  * @uses  		Illuminate\Http\Request
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/eav
+ * @package 	congraph/eav
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -82,7 +82,7 @@ class ApiController extends Controller
 	/**
 	 * Constructor
 	 * 
-	 * @param \Cookbook\Core\Bus\CommandDispatcher  $bus
+	 * @param \Congraph\Core\Bus\CommandDispatcher  $bus
 	 * @param \Illuminate\Http\Request  			$request
 	 */
 	public function __construct(CommandDispatcher $bus, Request $request)
@@ -113,7 +113,7 @@ class ApiController extends Controller
 	}
 
 	/**
-	 * Handle Cookbook exceptions
+	 * Handle Congraph exceptions
 	 * and convert them to appropriate HTTP exceptions
 	 * for Dingo API
 	 * 
@@ -123,11 +123,11 @@ class ApiController extends Controller
 	 */
 	protected function handleException(Exception $e)
 	{
-		// if it's a cookbook exception, 
+		// if it's a congraph exception, 
 		// use it's toArray function to ger all errors
-		if( $e instanceOf CookbookException)
+		if( $e instanceOf CongraphException)
 		{
-			$this->handleCookbookException($e);
+			$this->handleCongraphException($e);
 		}
 
 		// if it's some other exception don't handle it
@@ -137,9 +137,9 @@ class ApiController extends Controller
 	/**
 	 * Matches correct HTTP exception
 	 * 
-	 * @param \Cookbook\Core\Exceptions\Exception  $e
+	 * @param \Congraph\Core\Exceptions\Exception  $e
 	 */
-	protected function handleCookbookException(CookbookException $e)
+	protected function handleCongraphException(CongraphException $e)
 	{
 
 		$errors = $e->getErrors();

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Api\Linker;
-use Cookbook\OAuth2\Commands\Clients\ClientCreateCommand;
-use Cookbook\OAuth2\Commands\Clients\ClientDeleteCommand;
-use Cookbook\OAuth2\Commands\Clients\ClientFetchCommand;
-use Cookbook\OAuth2\Commands\Clients\ClientGetCommand;
-use Cookbook\OAuth2\Commands\Clients\ClientUpdateCommand;
+use Congraph\Api\Linker;
+use Congraph\OAuth2\Commands\Clients\ClientCreateCommand;
+use Congraph\OAuth2\Commands\Clients\ClientDeleteCommand;
+use Congraph\OAuth2\Commands\Clients\ClientFetchCommand;
+use Congraph\OAuth2\Commands\Clients\ClientGetCommand;
+use Congraph\OAuth2\Commands\Clients\ClientUpdateCommand;
 use Dingo\Api\Http\Response;
 
 
@@ -26,7 +26,7 @@ use Dingo\Api\Http\Response;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */

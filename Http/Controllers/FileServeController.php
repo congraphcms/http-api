@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/api package.
+ * This file is part of the congraph/api package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,15 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Api\Http\Controllers;
+namespace Congraph\Api\Http\Controllers;
 
-use Cookbook\Core\Bus\CommandDispatcher;
-use Cookbook\Filesystem\Commands\Files\FileServeCommand;
+use Congraph\Core\Bus\CommandDispatcher;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Routing\Controller;
-use Cookbook\Core\Exceptions\Exception as CookbookException;
+use Congraph\Core\Exceptions\Exception as CongraphException;
 use Exception;
 
 /**
@@ -26,7 +26,7 @@ use Exception;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/api
+ * @package 	congraph/api
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -97,18 +97,18 @@ class FileServeController extends Controller
 
 	protected function handleException(Exception $e)
 	{
-		// if it's a cookbook exception, 
+		// if it's a congraph exception, 
 		// use it's toArray function to ger all errors
-		if( $e instanceOf CookbookException )
+		if( $e instanceOf CongraphException )
 		{
-			return $this->handleCookbookException($e);
+			return $this->handleCongraphException($e);
 		}
 
 		// if it's some other exception return 500 error from exception
 		return $this->handleGenericException($e);
 	}
 
-	protected function handleCookbookException(CookbookException $e)
+	protected function handleCongraphException(CongraphException $e)
 	{
 		$errors = $e->getErrors();
 
