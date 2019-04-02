@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 
-// header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token, X-Auth-Token');
-header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+if (!App::runningUnitTests()) {
+	// header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Headers: authorization, accept, content-type, x-xsrf-token, x-csrf-token, X-Auth-Token');
+	header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+}
 
 $api = app('Dingo\Api\Routing\Router');
 

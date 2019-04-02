@@ -82,15 +82,13 @@ class FileServeController extends Controller
 			return $this->handleException($e);
 		}
 
-		// $mime = Storage::getMimetype($command->url);
-
-		$mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $result);
         // return http response
-        $response = new Response($result, 200, array(
-            'Content-Type' => $mime,
-            // 'Cache-Control' => 'max-age='.(Config::get('cb.files.cache_lifetime')*60).', public',
-            'Etag' => md5($result)
-        ));
+        $response = new Response($result['content'], 200, array(
+            'Content-Type' => $result['mime_type'],
+			'Cache-Control' => 'max-age='.(Config::get('cb.files.cache_lifetime')*60).', public',
+			'Last-Modified' => $result['last_modified']->format( 'D, d M Y H:i:s T' ),
+            'Etag' => md5(serialize($result))
+		));
 
 		return $response;
 	}

@@ -50,12 +50,12 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/users/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/lucadegasperi/oauth2-server-laravel/database/migrations'),
 		]);
 
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../vendor/lucadegasperi/oauth2-server-laravel/database/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../vendor/congraph/oauth2/database/migrations'),
 		]);
 
 		$this->artisan('db:seed', [
